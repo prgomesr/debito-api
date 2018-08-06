@@ -29,6 +29,16 @@ public class Cliente {
     @Enumerated(EnumType.STRING)
     private Banco banco;
 
+    public Cliente() {
+    }
+
+    public Cliente(String nome, String conta, String agencia, String identificadorBanco) {
+        this.nome = nome;
+        this.conta = conta;
+        this.agencia = agencia;
+        this.identificadorBanco = identificadorBanco;
+    }
+
     public Long getId() {
         return id;
     }

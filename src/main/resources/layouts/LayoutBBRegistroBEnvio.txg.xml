@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<txg:Texgit xmlns:txg="http://jrimum.org/texgit"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://gilmatryx.googlepages.com/Texgit http://jrimum.org/texgit"
+	version="1.0-academic">
+
+	<FlatFile>
+		<layout>
+			<name>Arquivo-Remessa_BBCNAB240</name>
+			<version>Version 08, Published: 2009/09/30</version>
+			<description>
+				Layout para Cobrança.
+
+				Arquivo texto - padrão CNAB
+				Meio de Registro Transmissão de Dados 
+				Descrição de Registro - Tamanho 240 Bytes
+				Organização Sequencial
+
+				ARQUIVO FORMATO CNAB REMESSA, REGISTROS:
+				 
+				0 - Header Label
+				1 - Cobrança - Transação 
+				2 - Mensagem (opcional) 
+				3 - Rateio de Crédito (opcional)
+				7 – Sacador Avalista (opcional)
+				9 - Trailler (Papel de finalizador de lote)
+			</description>
+		</layout>
+		<GroupOfRecords>
+			<Record name="Header" description="Protocolo de comunicação" >
+				<GroupOfFields>
+					<IdType name="CodigoDoRegistro" value="A" length="1" position="1" />
+					<Field name="CodigoDeRemessa" value="1" length="1" />
+					<Field name="CodigoDoConvenio" length="20" />
+					<Field name="NomeDaEmpresa" length="20" />
+					<Field name="CodigoDoBanco"  value="001" length="3" />
+					<Field name="NomeDoBanco" value="BANCO DO BRASIL" length="20" />
+					<Field name="DataDeGerecao" length="8" type="DATE" format="DATE_YYYYMMDD" />
+					<Field name="NumeroSequencial" length="6" padding="ZERO_LEFT"/>
+					<Field name="VersaoDoLayout" value="04" length="2" />
+					<Field name="IdentificacaoDoServico" value="DEBITO AUTOMATICO" length="17"/>
+					<Field name="ReservadoParaOFuturo" length="52" />
+				</GroupOfFields>
+			</Record>
+			<Record name="Detalhe" repeatable="true">
+				<GroupOfFields>
+					<IdType name="CodRegistro" value="B" length="1" position="1" />
+					<Field name="IdClienteEmpresa" length="25" />
+					<Field name="AgenciaParaDebito" length="4" />
+					<Field name="IdClienteBanco" length="14" padding="ZERO_LEFT" />
+					<Field name="DataDaOpcao" length="8" type="DATE" format="DATE_YYYYMMDD"/>
+					<Field name="ReservadoFuturo" length="97" />
+					<Field name="CodMovimento" length="1" value="2"/>
+				</GroupOfFields>
+			</Record>
+			<Record name="Trailler">
+				<GroupOfFields>
+					<IdType name="CodRegistro" value="Z" length="1" position="1" />
+					<Field name="TotalRegistros" length="6" padding="ZERO_LEFT"/>
+					<Field name="ValorTotalRegistros" length="17" type="BIGDECIMAL" format="DECIMAL_DD" padding="ZERO_LEFT"/>
+					<Field name="ReservadoFuturo" length="126" />
+				</GroupOfFields>
+			</Record>
+		</GroupOfRecords>
+	</FlatFile>
+
+</txg:Texgit>

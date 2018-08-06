@@ -1,10 +1,12 @@
 package br.prgomesr.debitoapi.service;
 
+import br.prgomesr.debitoapi.model.Cliente;
 import br.prgomesr.debitoapi.model.Convenio;
 import br.prgomesr.debitoapi.model.Empresa;
 import br.prgomesr.debitoapi.model.Lancamento;
 import br.prgomesr.debitoapi.repository.Lancamentos;
 import br.prgomesr.debitoapi.util.remessa.bb.GerarRemessa;
+import br.prgomesr.debitoapi.util.remessa.bb.GerarRemessaInclusao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +22,9 @@ public class LancamentoServiceImpl implements LancamentoService {
 
     @Autowired
     private GerarRemessa remessa;
+
+    @Autowired
+    private GerarRemessaInclusao remessaInclusao;
 
     @Autowired
     private ConvenioService convenioService;
@@ -53,7 +58,10 @@ public class LancamentoServiceImpl implements LancamentoService {
     @Override
     public void exportarRemessa(List<Lancamento> lancamentos, Convenio convenio, Empresa empresa) throws IOException {
 
-        remessa.exportarRemessa(lancamentos, convenio, empresa);
+       // remessa.exportarRemessa(lancamentos, convenio, empresa);
+        List<Cliente> clientes = new ArrayList<>();
+        clientes.add(new Cliente("Mario Santana", "15279", "4018", "4018000015279"));
+        remessaInclusao.exportarRemessa(clientes, convenio, empresa);
 
         convenioService.atualizarSequencial(convenio.getId(), convenio.getSequencial()+1l);
     }
