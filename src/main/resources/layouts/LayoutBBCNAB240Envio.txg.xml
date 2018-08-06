@@ -36,7 +36,7 @@
 					<Field name="CodigoDoBanco"  value="001" length="3" />
 					<Field name="NomeDoBanco" value="BANCO DO BRASIL" length="20" />
 					<Field name="DataDeGerecao" length="8" type="DATE" format="DATE_YYYYMMDD" />
-					<Field name="NumeroSequencial" length="3" />
+					<Field name="NumeroSequencial" length="6" padding="ZERO_LEFT"/>
 					<Field name="VersaoDoLayout" value="04" length="2" />
 					<Field name="IdentificacaoDoServico" value="DEBITO AUTOMATICO" length="17"/>
 					<Field name="ReservadoParaOFuturo" length="52" />

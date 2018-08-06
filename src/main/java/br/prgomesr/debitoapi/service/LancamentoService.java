@@ -1,5 +1,7 @@
 package br.prgomesr.debitoapi.service;
 
+import br.prgomesr.debitoapi.model.Convenio;
+import br.prgomesr.debitoapi.model.Empresa;
 import br.prgomesr.debitoapi.model.Lancamento;
 
 import java.io.IOException;
@@ -12,6 +14,6 @@ public interface LancamentoService {
     Lancamento cadastrar(Lancamento lancamento);
     Lancamento atualizar(Long id, Lancamento lancamento);
     void remover(Long id);
-    void gerarRemessa(List<Lancamento> lancamentos) throws IOException;
+    public void exportarRemessa(List<Lancamento> lancamentos, Convenio convenio, Empresa empresa) throws IOException;
 
 }

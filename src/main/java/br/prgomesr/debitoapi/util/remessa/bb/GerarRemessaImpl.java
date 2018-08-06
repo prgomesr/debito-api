@@ -31,7 +31,7 @@ public class GerarRemessaImpl implements GerarRemessa {
         FlatFile<Record> ff = Texgit.createFlatFile(layout);
 
         ff.addRecord(createHeader(ff, convenio, empresa));
-        
+
         List<Record> records = createDetalhe(ff, lancamentos);
         records.forEach(record -> {
             ff.addRecord(record);
@@ -40,7 +40,7 @@ public class GerarRemessaImpl implements GerarRemessa {
         ff.addRecord(createTrailler(ff));
 
         FileUtils.writeLines(new File("src/main/resources/remessa/" +
-                convenio.getNumero() + "_" + convenio.getSequencial()), ff.write(), "\r\n");
+                convenio.getNumero() + "_" + convenio.getSequencial() + ".TXT"), ff.write(), "\r\n");
     }
 
     @Override
@@ -59,12 +59,15 @@ public class GerarRemessaImpl implements GerarRemessa {
     public List<Record> createDetalhe(FlatFile<Record> flatFile, List<Lancamento> lancamentos) {
         List<Record> records = new ArrayList<>();
 
+        valorTotal = new BigDecimal(0);
+        count = 2;
+
         lancamentos.forEach(lancamento -> {
             Record detalhe = flatFile.createRecord("Detalhe");
 
             detalhe.setValue("IdClienteEmpresa", lancamento.getCliente().getIdentificadorBanco());
             detalhe.setValue("AgenciaParaDebito", lancamento.getCliente().getAgencia());
-            detalhe.setValue("IdClienteBanco", lancamento.getCliente().getIdentificadorBanco());
+            detalhe.setValue("IdClienteBanco", lancamento.getCliente().getConta());
             detalhe.setValue("DataVencimento", lancamento.getVencimento());
             detalhe.setValue("ValorDoDebito", lancamento.getValor());
             detalhe.setValue("UsoEmpresa", lancamento.getCliente().getNome());
@@ -73,10 +76,13 @@ public class GerarRemessaImpl implements GerarRemessa {
 
             valorTotal = valorTotal.add(lancamento.getValor());
 
-            for (int i = 0; i < lancamentos.size(); i++) {
-                count ++;
-            }
         });
+
+        for (int i = 0; i < lancamentos.size(); i++) {
+            count ++;
+        }
+
+        lancamentos.clear();
 
         return records;
     }
