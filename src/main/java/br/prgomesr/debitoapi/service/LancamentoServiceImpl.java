@@ -58,10 +58,10 @@ public class LancamentoServiceImpl implements LancamentoService {
     @Override
     public void exportarRemessa(List<Lancamento> lancamentos, Convenio convenio, Empresa empresa) throws IOException {
 
-       // remessa.exportarRemessa(lancamentos, convenio, empresa);
-        List<Cliente> clientes = new ArrayList<>();
-        clientes.add(new Cliente("Mario Santana", "15279", "4018", "4018000015279"));
-        remessaInclusao.exportarRemessa(clientes, convenio, empresa);
+        remessa.exportarRemessa(lancamentos, convenio, empresa);
+//        List<Cliente> clientes = new ArrayList<>();
+//        clientes.add(new Cliente("Mario Santana", "15279", "4018", "4018000015279"));
+//        remessaInclusao.exportarRemessa(clientes, convenio, empresa);
 
         convenioService.atualizarSequencial(convenio.getId(), convenio.getSequencial()+1l);
     }

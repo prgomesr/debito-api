@@ -40,7 +40,7 @@ public class GerarRemessaImpl implements GerarRemessa {
         ff.addRecord(createTrailler(ff));
 
         FileUtils.writeLines(new File("src/main/resources/remessa/" +
-                convenio.getNumero() + "_" + convenio.getSequencial() + ".TXT"), ff.write(), "\r\n");
+                convenio.getNumero() + "_" + convenio.getSequencial()), ff.write(), "\r\n");
     }
 
     @Override

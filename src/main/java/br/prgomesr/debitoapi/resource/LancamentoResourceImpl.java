@@ -6,10 +6,15 @@ import br.prgomesr.debitoapi.model.Lancamento;
 import br.prgomesr.debitoapi.service.ConvenioService;
 import br.prgomesr.debitoapi.service.EmpresaService;
 import br.prgomesr.debitoapi.service.LancamentoService;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,6 +69,16 @@ public class LancamentoResourceImpl implements LancamentoResource {
             throw new IllegalArgumentException("erro "+e);
         }
 //        System.out.println(lancamentos);
+    }
+
+    @Override
+    @GetMapping("pegar-remessa")
+    public ResponseEntity<byte[]> remessa(String nome) throws IOException{
+        nome = "55552_70";
+        InputStream stream = this.getClass().getResourceAsStream("/remessa/" + nome);
+        byte [] remessa = IOUtils.toByteArray(stream);
+        return ResponseEntity.ok().header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE)
+                .body(remessa);
     }
 
 }
