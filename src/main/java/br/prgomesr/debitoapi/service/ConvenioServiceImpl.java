@@ -20,7 +20,7 @@ public class ConvenioServiceImpl implements ConvenioService {
 
     @Override
     public Convenio listarPorId(Long id) {
-        return repository.findOne(id);
+        return repository.getOne(id);
     }
 
     @Override
@@ -43,6 +43,6 @@ public class ConvenioServiceImpl implements ConvenioService {
 
     @Override
     public void remover(Long id) {
-        repository.delete(id);
+        repository.deleteById(id);
     }
 }

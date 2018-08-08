@@ -2,7 +2,7 @@ package br.prgomesr.debitoapi.model;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.Objects;
 
 @Entity
@@ -18,12 +18,14 @@ public class Lancamento {
     @Column(name = "valor_pago")
     private BigDecimal valorPago;
 
-    private Date vencimento;
+    private LocalDate vencimento;
 
-    private Date pagamento;
+    private LocalDate pagamento;
 
     @Enumerated(EnumType.STRING)
     private Situacao situacao;
+
+    private String lote;
 
     @ManyToOne
     @JoinColumn(name = "cliente_id")
@@ -49,11 +51,11 @@ public class Lancamento {
         this.valor = valor;
     }
 
-    public Date getVencimento() {
+    public LocalDate getVencimento() {
         return vencimento;
     }
 
-    public void setVencimento(Date vencimento) {
+    public void setVencimento(LocalDate vencimento) {
         this.vencimento = vencimento;
     }
 
@@ -63,6 +65,14 @@ public class Lancamento {
 
     public void setSituacao(Situacao situacao) {
         this.situacao = situacao;
+    }
+
+    public String getLote() {
+        return lote;
+    }
+
+    public void setLote(String lote) {
+        this.lote = lote;
     }
 
     public Cliente getCliente() {
@@ -77,11 +87,11 @@ public class Lancamento {
         this.valorPago = valorPago;
     }
 
-    public Date getPagamento() {
+    public LocalDate getPagamento() {
         return pagamento;
     }
 
-    public void setPagamento(Date pagamento) {
+    public void setPagamento(LocalDate pagamento) {
         this.pagamento = pagamento;
     }
 

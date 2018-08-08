@@ -3,16 +3,21 @@ package br.prgomesr.debitoapi.util.remessa.bb;
 import br.prgomesr.debitoapi.model.Convenio;
 import br.prgomesr.debitoapi.model.Empresa;
 import br.prgomesr.debitoapi.model.Lancamento;
+import br.prgomesr.debitoapi.model.Remessa;
+import br.prgomesr.debitoapi.service.RemessaService;
 import org.apache.commons.io.FileUtils;
 import org.jrimum.texgit.FlatFile;
 import org.jrimum.texgit.Record;
 import org.jrimum.texgit.Texgit;
 import org.jrimum.utilix.ClassLoaders;
+import org.jrimum.utilix.text.DateFormat;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -22,6 +27,9 @@ public class GerarRemessaImpl implements GerarRemessa {
 
     private BigDecimal valorTotal = new BigDecimal(0);
     private int count = 2;
+
+    @Autowired
+    private RemessaService remessaService;
 
     @Override
     public void exportarRemessa(List<Lancamento> lancamentos, Convenio convenio, Empresa empresa) throws IOException {
@@ -40,7 +48,9 @@ public class GerarRemessaImpl implements GerarRemessa {
         ff.addRecord(createTrailler(ff));
 
         FileUtils.writeLines(new File("src/main/resources/remessa/" +
-                convenio.getNumero() + "_" + convenio.getSequencial()), ff.write(), "\r\n");
+                convenio.getNumero() + "_" + convenio.getSequencial() + ".TXT"), ff.write(), "\r\n");
+
+        salvarRemessa(convenio);
     }
 
     @Override
@@ -58,6 +68,7 @@ public class GerarRemessaImpl implements GerarRemessa {
     @Override
     public List<Record> createDetalhe(FlatFile<Record> flatFile, List<Lancamento> lancamentos) {
         List<Record> records = new ArrayList<>();
+        int lote = Integer.valueOf(lancamentos.get(0).getLote()) + 1;
 
         valorTotal = new BigDecimal(0);
         count = 2;
@@ -68,19 +79,17 @@ public class GerarRemessaImpl implements GerarRemessa {
             detalhe.setValue("IdClienteEmpresa", lancamento.getCliente().getIdentificadorBanco());
             detalhe.setValue("AgenciaParaDebito", lancamento.getCliente().getAgencia());
             detalhe.setValue("IdClienteBanco", lancamento.getCliente().getConta());
-            detalhe.setValue("DataVencimento", lancamento.getVencimento());
+            detalhe.setValue("DataVencimento", DateFormat.YYYYMMDD.format(java.sql.Date.valueOf(lancamento.getVencimento())));
             detalhe.setValue("ValorDoDebito", lancamento.getValor());
             detalhe.setValue("UsoEmpresa", lancamento.getCliente().getNome());
 
             records.add(detalhe);
+            lancamento.setLote(String.valueOf(lote));
 
             valorTotal = valorTotal.add(lancamento.getValor());
+            count ++;
 
         });
-
-        for (int i = 0; i < lancamentos.size(); i++) {
-            count ++;
-        }
 
         lancamentos.clear();
 
@@ -95,5 +104,14 @@ public class GerarRemessaImpl implements GerarRemessa {
         trailler.setValue("ValorTotalRegistros", valorTotal);
 
         return trailler;
+    }
+
+    private void salvarRemessa(Convenio convenio) {
+        Remessa remessa = new Remessa();
+        remessa.setNome(convenio.getNumero() + "_" + convenio.getSequencial());
+        remessa.setValor(valorTotal);
+        remessa.setSituacao("NÃO BAIXADA");
+        remessa.setData(LocalDate.now());
+        remessaService.cadastrar(remessa);
     }
 }

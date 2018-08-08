@@ -3,6 +3,8 @@ package br.prgomesr.debitoapi.resource;
 import br.prgomesr.debitoapi.model.Convenio;
 import br.prgomesr.debitoapi.model.Empresa;
 import br.prgomesr.debitoapi.model.Lancamento;
+import br.prgomesr.debitoapi.repository.Lancamentos;
+import br.prgomesr.debitoapi.repository.filter.LancamentoFilter;
 import br.prgomesr.debitoapi.service.ConvenioService;
 import br.prgomesr.debitoapi.service.EmpresaService;
 import br.prgomesr.debitoapi.service.LancamentoService;
@@ -26,6 +28,9 @@ public class LancamentoResourceImpl implements LancamentoResource {
     private LancamentoService service;
 
     @Autowired
+    private Lancamentos repository;
+
+    @Autowired
     private ConvenioService convenioService;
 
     @Autowired
@@ -33,8 +38,13 @@ public class LancamentoResourceImpl implements LancamentoResource {
 
     @Override
     @GetMapping
-    public List<Lancamento> listar() {
-        return service.listar();
+    public List<Lancamento> listarPorLote(LancamentoFilter filter) {
+        return service.listarPorLote(filter);
+    }
+
+    @Override
+    public List<Lancamento> filtrarPorLote(String lote) {
+        return repository.filtrarPorLote(lote);
     }
 
     @Override
@@ -60,7 +70,8 @@ public class LancamentoResourceImpl implements LancamentoResource {
     @Override
     @GetMapping("gerarRemessa")
     public void exportarRemessa() {
-        List<Lancamento> lancamentos = lancamentos = listar();
+        LancamentoFilter filter = new LancamentoFilter();
+        List<Lancamento> lancamentos = filtrarPorLote("5");
         Convenio convenio = convenioService.listarPorId(2L);
         Empresa empresa = empresaService.listarPorId(1L);
         try {
@@ -74,11 +85,8 @@ public class LancamentoResourceImpl implements LancamentoResource {
     @Override
     @GetMapping("pegar-remessa")
     public ResponseEntity<byte[]> remessa(String nome) throws IOException{
-        nome = "55552_70";
-        InputStream stream = this.getClass().getResourceAsStream("/remessa/" + nome);
-        byte [] remessa = IOUtils.toByteArray(stream);
-        return ResponseEntity.ok().header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE)
-                .body(remessa);
+        nome = "55552_84";
+        return service.remessa(nome);
     }
 
 }

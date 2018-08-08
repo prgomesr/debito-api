@@ -20,7 +20,7 @@ public class EmpresaServiceImpl implements EmpresaService {
 
     @Override
     public Empresa listarPorId(Long id) {
-        return repository.findOne(id);
+        return repository.getOne(id);
     }
 
     @Override
