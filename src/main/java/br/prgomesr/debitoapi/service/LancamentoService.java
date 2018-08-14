@@ -12,7 +12,7 @@ import java.util.List;
 public interface LancamentoService {
 
     List<Lancamento> listarPorLote(LancamentoFilter filter);
-    Lancamento listarPorId(Long id);
+    ResponseEntity <Lancamento> listarPorId(Long id);
     Lancamento cadastrar(Lancamento lancamento);
     Lancamento atualizar(Long id, Lancamento lancamento);
     void remover(Long id);

@@ -3,15 +3,23 @@ package br.prgomesr.debitoapi.resource;
 import br.prgomesr.debitoapi.model.Convenio;
 import br.prgomesr.debitoapi.service.ConvenioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+@RestController
+@RequestMapping("/convenios")
+@CrossOrigin("http://localhost:4200")
 public class ConvenioResourceImpl implements ConvenioResource {
 
     @Autowired
     private ConvenioService service;
 
     @Override
+    @GetMapping
     public List<Convenio> listar() {
         return service.listar();
     }

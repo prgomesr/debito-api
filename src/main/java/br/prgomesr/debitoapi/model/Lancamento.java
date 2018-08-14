@@ -32,8 +32,8 @@ public class Lancamento {
     private Cliente cliente;
 
     @ManyToOne
-    @JoinColumn(name = "conta_id")
-    private Conta conta;
+    @JoinColumn(name = "convenio_id")
+    private Convenio convenio;
 
     public Long getId() {
         return id;
@@ -99,12 +99,12 @@ public class Lancamento {
         this.cliente = cliente;
     }
 
-    public Conta getConta() {
-        return conta;
+    public Convenio getConvenio() {
+        return convenio;
     }
 
-    public void setConta(Conta conta) {
-        this.conta = conta;
+    public void setConvenio(Convenio convenio) {
+        this.convenio = convenio;
     }
 
     @Override

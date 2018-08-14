@@ -8,20 +8,20 @@ import br.prgomesr.debitoapi.repository.filter.LancamentoFilter;
 import br.prgomesr.debitoapi.service.ConvenioService;
 import br.prgomesr.debitoapi.service.EmpresaService;
 import br.prgomesr.debitoapi.service.LancamentoService;
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/lancamentos")
+@CrossOrigin("http://localhost:4200")
 public class LancamentoResourceImpl implements LancamentoResource {
 
     @Autowired
@@ -29,6 +29,9 @@ public class LancamentoResourceImpl implements LancamentoResource {
 
     @Autowired
     private Lancamentos repository;
+
+    @Autowired
+    private ApplicationEventPublisher publisher;
 
     @Autowired
     private ConvenioService convenioService;
@@ -48,13 +51,19 @@ public class LancamentoResourceImpl implements LancamentoResource {
     }
 
     @Override
-    public Lancamento listarPorId(Long id) {
-        return null;
+    @GetMapping("/{id}")
+    public ResponseEntity <Lancamento> listarPorId(@PathVariable Long id) {
+        return service.listarPorId(id);
     }
 
     @Override
-    public Lancamento cadastrar(Lancamento lancamento) {
-        return null;
+    @PostMapping
+    public ResponseEntity<Lancamento> cadastrar(@RequestBody Lancamento lancamento, HttpServletResponse response) {
+        Lancamento lancamentoSalvo = service.cadastrar(lancamento);
+
+//        publisher.publishEvent(new RecursoCriadoEvent(this, response, lancamentoSalvo.getId()));
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(lancamentoSalvo);
     }
 
     @Override

@@ -14,16 +14,12 @@ public class Conta {
     private String agencia;
 
     @Column(name = "digito_agencia")
-    private String digtoAgencia;
+    private String digitoAgencia;
 
-    private String conta;
+    private String numero;
 
     @Column(name = "digito_conta")
-    private String digtoConta;
-
-    @ManyToOne
-    @JoinColumn(name = "convenio_id")
-    private Convenio convenio;
+    private String digitoConta;
 
     @Enumerated(EnumType.STRING)
     private Banco banco;
@@ -48,36 +44,29 @@ public class Conta {
         this.agencia = agencia;
     }
 
-    public String getDigtoAgencia() {
-        return digtoAgencia;
+
+    public String getNumero() {
+        return numero;
     }
 
-    public void setDigtoAgencia(String digtoAgencia) {
-        this.digtoAgencia = digtoAgencia;
+    public void setNumero(String numero) {
+        this.numero = numero;
     }
 
-    public String getConta() {
-        return conta;
+    public String getDigitoAgencia() {
+        return digitoAgencia;
     }
 
-    public void setConta(String conta) {
-        this.conta = conta;
+    public void setDigitoAgencia(String digitoAgencia) {
+        this.digitoAgencia = digitoAgencia;
     }
 
-    public String getDigtoConta() {
-        return digtoConta;
+    public String getDigitoConta() {
+        return digitoConta;
     }
 
-    public void setDigtoConta(String digtoConta) {
-        this.digtoConta = digtoConta;
-    }
-
-    public Convenio getConvenio() {
-        return convenio;
-    }
-
-    public void setConvenio(Convenio convenio) {
-        this.convenio = convenio;
+    public void setDigitoConta(String digitoConta) {
+        this.digitoConta = digitoConta;
     }
 
     public Banco getBanco() {

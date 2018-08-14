@@ -4,6 +4,7 @@ import br.prgomesr.debitoapi.model.Lancamento;
 import br.prgomesr.debitoapi.repository.filter.LancamentoFilter;
 import org.springframework.http.ResponseEntity;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
@@ -11,8 +12,8 @@ public interface LancamentoResource {
 
     List<Lancamento> listarPorLote(LancamentoFilter filter);
     public List<Lancamento> filtrarPorLote(String lote);
-    Lancamento listarPorId(Long id);
-    Lancamento cadastrar(Lancamento lancamento);
+    ResponseEntity<Lancamento> listarPorId(Long id);
+    ResponseEntity<Lancamento> cadastrar(Lancamento lancamento, HttpServletResponse response);
     Lancamento atualizar(Long id, Lancamento lancamento);
     void remover(Long id);
     public void exportarRemessa();

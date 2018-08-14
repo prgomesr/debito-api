@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class LancamentoServiceImpl implements LancamentoService {
@@ -40,8 +41,9 @@ public class LancamentoServiceImpl implements LancamentoService {
 
 
     @Override
-    public Lancamento listarPorId(Long id) {
-        return repository.getOne(id);
+    public ResponseEntity <Lancamento> listarPorId(Long id) {
+        Optional <Lancamento> lancamento = buscarRecursoExistente(id);
+        return lancamento.isPresent() ? ResponseEntity.ok(lancamento.get()) : ResponseEntity.notFound().build();
     }
 
     @Override
@@ -51,7 +53,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 
     @Override
     public Lancamento atualizar(Long id, Lancamento lancamento) {
-        lancamento = this.listarPorId(id);
+//        lancamento = buscarRecursoExistente(id);
         return repository.save(lancamento);
     }
 
@@ -76,6 +78,14 @@ public class LancamentoServiceImpl implements LancamentoService {
         byte [] remessa = IOUtils.toByteArray(stream);
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE)
                 .body(remessa);
+    }
+
+    private Optional <Lancamento> buscarRecursoExistente(Long id) {
+        Optional <Lancamento> lancamento = repository.findById(id);
+//        if (!lancamento.isPresent()) {
+//            throw  new IllegalArgumentException();
+//        }
+        return lancamento;
     }
 
 }

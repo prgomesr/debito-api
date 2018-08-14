@@ -15,6 +15,10 @@ public class Convenio {
 
     private Long sequencial;
 
+    @ManyToOne
+    @JoinColumn(name = "conta_id")
+    private Conta conta;
+
     public Long getId() {
         return id;
     }
@@ -37,6 +41,14 @@ public class Convenio {
 
     public void setSequencial(Long sequencial) {
         this.sequencial = sequencial;
+    }
+
+    public Conta getConta() {
+        return conta;
+    }
+
+    public void setConta(Conta conta) {
+        this.conta = conta;
     }
 
     @Override

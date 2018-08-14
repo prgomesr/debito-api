@@ -1,9 +1,8 @@
 package br.prgomesr.debitoapi.resource;
 
-import br.prgomesr.debitoapi.model.Cliente;
-import br.prgomesr.debitoapi.service.ClienteService;
+import br.prgomesr.debitoapi.model.Conta;
+import br.prgomesr.debitoapi.service.ContaService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -11,32 +10,31 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/clientes")
-@CrossOrigin("http://localhost:4200")
-public class ClienteResourceImpl implements ClienteResource {
+@RequestMapping("/contas")
+public class ContaResourceImpl implements ContaResource {
 
     @Autowired
-    private ClienteService service;
+    private ContaService service;
 
     @Override
     @GetMapping
-    public List<Cliente> listar() {
+    public List<Conta> listar() {
         return service.listar();
     }
 
     @Override
-    public Cliente listarPorId(Long id) {
+    public Conta listarPorId(Long id) {
         return service.listarPorId(id);
     }
 
     @Override
-    public Cliente cadastrar(Cliente cliente) {
-        return service.cadastrar(cliente);
+    public Conta cadastrar(Conta conta) {
+        return service.cadastrar(conta);
     }
 
     @Override
-    public Cliente atualizar(Long id, Cliente cliente) {
-        return service.atualizar(id, cliente);
+    public Conta atualizar(Long id, Conta conta) {
+        return service.atualizar(id, conta);
     }
 
     @Override
