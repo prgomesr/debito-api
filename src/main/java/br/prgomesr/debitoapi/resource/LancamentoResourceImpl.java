@@ -1,5 +1,6 @@
 package br.prgomesr.debitoapi.resource;
 
+import br.prgomesr.debitoapi.event.RecursoCriadoEvent;
 import br.prgomesr.debitoapi.model.Convenio;
 import br.prgomesr.debitoapi.model.Empresa;
 import br.prgomesr.debitoapi.model.Lancamento;
@@ -61,7 +62,7 @@ public class LancamentoResourceImpl implements LancamentoResource {
     public ResponseEntity<Lancamento> cadastrar(@RequestBody Lancamento lancamento, HttpServletResponse response) {
         Lancamento lancamentoSalvo = service.cadastrar(lancamento);
 
-//        publisher.publishEvent(new RecursoCriadoEvent(this, response, lancamentoSalvo.getId()));
+        publisher.publishEvent(new RecursoCriadoEvent(this, response, lancamentoSalvo.getId()));
 
         return ResponseEntity.status(HttpStatus.CREATED).body(lancamentoSalvo);
     }
