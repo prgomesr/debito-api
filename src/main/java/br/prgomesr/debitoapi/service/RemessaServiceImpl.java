@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class RemessaServiceImpl implements RemessaService {
@@ -35,7 +36,19 @@ public class RemessaServiceImpl implements RemessaService {
     }
 
     @Override
+    public Remessa atualizarSituacao(Long id, String situacao) {
+        Remessa remessa = listarPorId(id);
+        remessa.setSituacao(situacao);
+        return repository.save(remessa);
+    }
+
+    @Override
     public void remover(Long id) {
         repository.deleteById(id);
+    }
+
+    private Optional<Remessa> buscarRecursoExistente(Long id) {
+        Optional <Remessa> remessa = repository.findById(id);
+        return remessa;
     }
 }

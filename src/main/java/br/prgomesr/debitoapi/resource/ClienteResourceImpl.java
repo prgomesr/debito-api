@@ -12,7 +12,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/clientes")
-@CrossOrigin("http://localhost:4200")
 public class ClienteResourceImpl implements ClienteResource {
 
     @Autowired

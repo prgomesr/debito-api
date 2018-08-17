@@ -1,14 +1,29 @@
 package br.prgomesr.debitoapi.repository.filter;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.time.LocalDate;
+
 public class LancamentoFilter {
 
-    private String lote;
+    private String convenio;
 
-    public String getLote() {
-        return lote;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate vencimento;
+
+    public String getConvenio() {
+        return convenio;
     }
 
-    public void setLote(String lote) {
-        this.lote = lote;
+    public void setConvenio(String convenio) {
+        this.convenio = convenio;
+    }
+
+    public LocalDate getVencimento() {
+        return vencimento;
+    }
+
+    public void setVencimento(LocalDate vencimento) {
+        this.vencimento = vencimento;
     }
 }

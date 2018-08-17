@@ -4,11 +4,14 @@ import br.prgomesr.debitoapi.event.RecursoCriadoEvent;
 import br.prgomesr.debitoapi.model.Convenio;
 import br.prgomesr.debitoapi.model.Empresa;
 import br.prgomesr.debitoapi.model.Lancamento;
+import br.prgomesr.debitoapi.model.Remessa;
 import br.prgomesr.debitoapi.repository.Lancamentos;
 import br.prgomesr.debitoapi.repository.filter.LancamentoFilter;
+import br.prgomesr.debitoapi.repository.projection.LancamentoProjection;
 import br.prgomesr.debitoapi.service.ConvenioService;
 import br.prgomesr.debitoapi.service.EmpresaService;
 import br.prgomesr.debitoapi.service.LancamentoService;
+import br.prgomesr.debitoapi.service.RemessaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
@@ -16,13 +19,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/lancamentos")
-@CrossOrigin("http://localhost:4200")
 public class LancamentoResourceImpl implements LancamentoResource {
 
     @Autowired
@@ -40,15 +43,19 @@ public class LancamentoResourceImpl implements LancamentoResource {
     @Autowired
     private EmpresaService empresaService;
 
+    @Autowired
+    private RemessaService remessaService;
+
     @Override
-    @GetMapping
-    public List<Lancamento> listarPorLote(LancamentoFilter filter) {
+    @GetMapping(params = "detalhes")
+    public List<Lancamento> listarDetalhes(LancamentoFilter filter) {
         return service.listarPorLote(filter);
     }
 
     @Override
-    public List<Lancamento> filtrarPorLote(String lote) {
-        return repository.filtrarPorLote(lote);
+    @GetMapping
+    public List<LancamentoProjection> listar(LancamentoFilter filter) {
+        return service.listar(filter);
     }
 
     @Override
@@ -59,7 +66,7 @@ public class LancamentoResourceImpl implements LancamentoResource {
 
     @Override
     @PostMapping
-    public ResponseEntity<Lancamento> cadastrar(@RequestBody Lancamento lancamento, HttpServletResponse response) {
+    public ResponseEntity<Lancamento> cadastrar(@Valid @RequestBody Lancamento lancamento, HttpServletResponse response) {
         Lancamento lancamentoSalvo = service.cadastrar(lancamento);
 
         publisher.publishEvent(new RecursoCriadoEvent(this, response, lancamentoSalvo.getId()));
@@ -78,25 +85,28 @@ public class LancamentoResourceImpl implements LancamentoResource {
     }
 
     @Override
-    @GetMapping("gerarRemessa")
-    public void exportarRemessa() {
-        LancamentoFilter filter = new LancamentoFilter();
-        List<Lancamento> lancamentos = filtrarPorLote("5");
-        Convenio convenio = convenioService.listarPorId(2L);
-        Empresa empresa = empresaService.listarPorId(1L);
+    @GetMapping("gerar-remessa")
+    public ResponseEntity exportarRemessa(LancamentoFilter filter) throws IOException{
+        List<Lancamento> lancamentos = listarDetalhes(filter);
+        // Instanciando convenio
+        Convenio convenio = convenioService
+                .listarPorId(lancamentos.get(0).getConvenio().getId());
+        // Instanciando empresa
+        Empresa empresa = empresaService
+                .listarPorId(lancamentos.get(0).getConvenio().getConta().getEmpresa().getId());
         try {
             service.exportarRemessa(lancamentos, convenio, empresa);
         } catch (IOException e) {
             throw new IllegalArgumentException("erro "+e);
         }
-//        System.out.println(lancamentos);
+        return ResponseEntity.status(HttpStatus.CREATED).body(lancamentos);
     }
 
     @Override
-    @GetMapping("pegar-remessa")
-    public ResponseEntity<byte[]> remessa(String nome) throws IOException{
-        nome = "55552_84";
-        return service.remessa(nome);
+    @GetMapping("/{id}/pegar-remessa")
+    public ResponseEntity<byte[]> remessa(@PathVariable Long id) throws IOException{
+
+        return service.pegarRemessa(id);
     }
 
 }

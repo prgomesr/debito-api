@@ -12,7 +12,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/convenios")
-@CrossOrigin("http://localhost:4200")
 public class ConvenioResourceImpl implements ConvenioResource {
 
     @Autowired

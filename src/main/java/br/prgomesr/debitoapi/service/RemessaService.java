@@ -10,6 +10,7 @@ public interface RemessaService {
     Remessa listarPorId(Long id);
     Remessa cadastrar(Remessa remessa);
     Remessa atualizar(Long id, Remessa remessa);
+    Remessa atualizarSituacao(Long id, String situacao);
     void remover(Long id);
 
 }

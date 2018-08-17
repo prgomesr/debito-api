@@ -3,8 +3,10 @@ package br.prgomesr.debitoapi.service;
 import br.prgomesr.debitoapi.model.Convenio;
 import br.prgomesr.debitoapi.model.Empresa;
 import br.prgomesr.debitoapi.model.Lancamento;
+import br.prgomesr.debitoapi.model.Remessa;
 import br.prgomesr.debitoapi.repository.Lancamentos;
 import br.prgomesr.debitoapi.repository.filter.LancamentoFilter;
+import br.prgomesr.debitoapi.repository.projection.LancamentoProjection;
 import br.prgomesr.debitoapi.util.remessa.bb.GerarRemessa;
 import br.prgomesr.debitoapi.util.remessa.bb.GerarRemessaInclusao;
 import org.apache.commons.io.IOUtils;
@@ -34,9 +36,17 @@ public class LancamentoServiceImpl implements LancamentoService {
     @Autowired
     private ConvenioService convenioService;
 
+    @Autowired
+    private RemessaService remessaService;
+
     @Override
     public List<Lancamento> listarPorLote(LancamentoFilter filter) {
         return repository.filtrar(filter);
+    }
+
+    @Override
+    public List<LancamentoProjection> listar(LancamentoFilter filter) {
+        return repository.resumir(filter);
     }
 
 
@@ -72,12 +82,16 @@ public class LancamentoServiceImpl implements LancamentoService {
     }
 
     @Override
-    public ResponseEntity<byte[]> remessa(String nome) throws IOException {
+    public ResponseEntity<byte[]> pegarRemessa(Long id) throws IOException {
+//        regra para atualizar situacao da remessa
+        Remessa remessa = remessaService.listarPorId(id);
+        String situacao = "BAIXADA";
+        remessaService.atualizarSituacao(id, situacao);
+        InputStream stream = this.getClass().getResourceAsStream("/remessa/" + remessa.getNome() + ".TXT");
+        byte [] arquivo = IOUtils.toByteArray(stream);
 
-        InputStream stream = this.getClass().getResourceAsStream("/remessa/" + nome + ".TXT");
-        byte [] remessa = IOUtils.toByteArray(stream);
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE)
-                .body(remessa);
+                .body(arquivo);
     }
 
     private Optional <Lancamento> buscarRecursoExistente(Long id) {

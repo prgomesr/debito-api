@@ -68,7 +68,7 @@ public class GerarRemessaImpl implements GerarRemessa {
     @Override
     public List<Record> createDetalhe(FlatFile<Record> flatFile, List<Lancamento> lancamentos) {
         List<Record> records = new ArrayList<>();
-        int lote = Integer.valueOf(lancamentos.get(0).getLote()) + 1;
+//        int lote = Integer.valueOf(lancamentos.get(0).getLote()) + 1;
 
         valorTotal = new BigDecimal(0);
         count = 2;
@@ -84,7 +84,7 @@ public class GerarRemessaImpl implements GerarRemessa {
             detalhe.setValue("UsoEmpresa", lancamento.getCliente().getNome());
 
             records.add(detalhe);
-            lancamento.setLote(String.valueOf(lote));
+//            lancamento.setLote(String.valueOf(lote));
 
             valorTotal = valorTotal.add(lancamento.getValor());
             count ++;

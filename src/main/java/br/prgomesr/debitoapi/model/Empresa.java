@@ -42,4 +42,11 @@ public class Empresa {
         return Objects.hash(getId());
     }
 
+    @Override
+    public String toString() {
+        return "Empresa{" +
+                "id=" + id +
+                ", nome='" + nome + '\'' +
+                '}';
+    }
 }

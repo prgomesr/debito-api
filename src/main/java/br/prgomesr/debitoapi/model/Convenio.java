@@ -64,4 +64,13 @@ public class Convenio {
         return Objects.hash(id);
     }
 
+    @Override
+    public String toString() {
+        return "Convenio{" +
+                "id=" + id +
+                ", numero='" + numero + '\'' +
+                ", sequencial=" + sequencial +
+                ", conta=" + conta +
+                '}';
+    }
 }

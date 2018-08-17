@@ -1,6 +1,7 @@
 package br.prgomesr.debitoapi.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
@@ -13,26 +14,31 @@ public class Lancamento {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
     private BigDecimal valor;
 
     @Column(name = "valor_pago")
     private BigDecimal valorPago;
 
+    @NotNull
     private LocalDate vencimento;
 
     private LocalDate pagamento;
 
     @Enumerated(EnumType.STRING)
+    @NotNull
     private Situacao situacao;
 
     private String lote;
 
     @ManyToOne
     @JoinColumn(name = "cliente_id")
+    @NotNull
     private Cliente cliente;
 
     @ManyToOne
     @JoinColumn(name = "convenio_id")
+    @NotNull
     private Convenio convenio;
 
     public Long getId() {
@@ -120,4 +126,18 @@ public class Lancamento {
         return Objects.hash(getId());
     }
 
+    @Override
+    public String toString() {
+        return "Lancamento{" +
+                "id=" + id +
+                ", valor=" + valor +
+                ", valorPago=" + valorPago +
+                ", vencimento=" + vencimento +
+                ", pagamento=" + pagamento +
+                ", situacao=" + situacao +
+                ", lote='" + lote + '\'' +
+                ", cliente=" + cliente +
+                ", convenio=" + convenio +
+                '}';
+    }
 }
