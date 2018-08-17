@@ -1,5 +1,8 @@
 package br.prgomesr.debitoapi.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
@@ -15,8 +18,10 @@ public class Cliente {
     @NotNull
     private String nome;
 
+    @NotNull
     private String conta;
 
+    @NotNull
     private String agencia;
 
     @Column(name = "digito_agencia")
@@ -26,7 +31,11 @@ public class Cliente {
     private String digitoConta;
 
     @Column(name = "identificador_banco")
+    @NotNull
     private String identificadorBanco;
+
+    @NotNull
+    private boolean ativo;
 
     @Enumerated(EnumType.STRING)
     private Banco banco;
@@ -103,6 +112,20 @@ public class Cliente {
 
     public void setBanco(Banco banco) {
         this.banco = banco;
+    }
+
+    public boolean isAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
+    }
+
+    @JsonIgnore
+    @Transient
+    public boolean isInativo() {
+        return !this.ativo;
     }
 
     @Override

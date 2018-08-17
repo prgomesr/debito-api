@@ -11,4 +11,5 @@ public interface ClienteService {
     Cliente cadastrar(Cliente cliente);
     Cliente atualizar(Long id, Cliente cliente);
     void remover(Long id);
+    public Cliente buscarRegistroExistente(Long id);
 }

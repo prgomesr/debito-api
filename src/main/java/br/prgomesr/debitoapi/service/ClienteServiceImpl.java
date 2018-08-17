@@ -3,6 +3,7 @@ package br.prgomesr.debitoapi.service;
 import br.prgomesr.debitoapi.model.Cliente;
 import br.prgomesr.debitoapi.repository.Clientes;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,5 +38,13 @@ public class ClienteServiceImpl implements ClienteService {
     @Override
     public void remover(Long id) {
         repository.deleteById(id);
+    }
+
+    public Cliente buscarRegistroExistente(Long id) {
+        Cliente cliente = repository.getOne(id);
+        if (cliente == null) {
+            throw new EmptyResultDataAccessException(1);
+        }
+        return cliente;
     }
 }

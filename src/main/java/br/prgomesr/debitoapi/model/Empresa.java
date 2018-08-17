@@ -1,6 +1,7 @@
 package br.prgomesr.debitoapi.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 @Entity
@@ -11,6 +12,7 @@ public class Empresa {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
     private String nome;
 
     public Long getId() {

@@ -16,9 +16,9 @@ public interface LancamentoResource {
     List<LancamentoProjection> listar(LancamentoFilter filter);
     ResponseEntity<Lancamento> listarPorId(Long id);
     ResponseEntity<Lancamento> cadastrar(Lancamento lancamento, HttpServletResponse response);
-    Lancamento atualizar(Long id, Lancamento lancamento);
+    ResponseEntity <Lancamento> atualizar(Long id, Lancamento lancamento);
     void remover(Long id);
     public ResponseEntity exportarRemessa(LancamentoFilter filter) throws IOException;
-    public ResponseEntity<byte []> remessa(Long id) throws IOException;
+    public ResponseEntity<?> remessa(Long id) throws IOException;
 
 }

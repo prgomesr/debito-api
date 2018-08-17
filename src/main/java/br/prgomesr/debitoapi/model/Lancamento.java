@@ -1,5 +1,7 @@
 package br.prgomesr.debitoapi.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
@@ -8,6 +10,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "lancamento")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Lancamento {
 
     @Id

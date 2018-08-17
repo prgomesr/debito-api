@@ -1,25 +1,25 @@
 package br.prgomesr.debitoapi.service;
 
-import br.prgomesr.debitoapi.model.Convenio;
-import br.prgomesr.debitoapi.model.Empresa;
-import br.prgomesr.debitoapi.model.Lancamento;
-import br.prgomesr.debitoapi.model.Remessa;
+import br.prgomesr.debitoapi.model.*;
 import br.prgomesr.debitoapi.repository.Lancamentos;
 import br.prgomesr.debitoapi.repository.filter.LancamentoFilter;
 import br.prgomesr.debitoapi.repository.projection.LancamentoProjection;
+import br.prgomesr.debitoapi.service.exception.ClienteInexistenteInativoException;
+import br.prgomesr.debitoapi.service.exception.RemessaNaoEncontradaException;
 import br.prgomesr.debitoapi.util.remessa.bb.GerarRemessa;
 import br.prgomesr.debitoapi.util.remessa.bb.GerarRemessaInclusao;
 import org.apache.commons.io.IOUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class LancamentoServiceImpl implements LancamentoService {
@@ -39,6 +39,9 @@ public class LancamentoServiceImpl implements LancamentoService {
     @Autowired
     private RemessaService remessaService;
 
+    @Autowired
+    private ClienteService clienteService;
+
     @Override
     public List<Lancamento> listarPorLote(LancamentoFilter filter) {
         return repository.filtrar(filter);
@@ -51,20 +54,25 @@ public class LancamentoServiceImpl implements LancamentoService {
 
 
     @Override
-    public ResponseEntity <Lancamento> listarPorId(Long id) {
-        Optional <Lancamento> lancamento = buscarRecursoExistente(id);
-        return lancamento.isPresent() ? ResponseEntity.ok(lancamento.get()) : ResponseEntity.notFound().build();
+    public ResponseEntity<Lancamento> listarPorId(Long id) {
+        Lancamento lancamento = buscarRecursoExistente(id);
+        return lancamento != null ? ResponseEntity.ok(lancamento) : ResponseEntity.notFound().build();
     }
 
     @Override
     public Lancamento cadastrar(Lancamento lancamento) {
+        Cliente cliente = clienteService.buscarRegistroExistente(lancamento.getCliente().getId());
+        if (cliente == null || cliente.isInativo()) {
+            throw new ClienteInexistenteInativoException();
+        }
         return repository.save(lancamento);
     }
 
     @Override
     public Lancamento atualizar(Long id, Lancamento lancamento) {
-//        lancamento = buscarRecursoExistente(id);
-        return repository.save(lancamento);
+        Lancamento lancamentoSalvo = buscarRecursoExistente(id);
+        BeanUtils.copyProperties(lancamento, lancamentoSalvo, "id");
+        return repository.save(lancamentoSalvo);
     }
 
     @Override
@@ -77,28 +85,37 @@ public class LancamentoServiceImpl implements LancamentoService {
 
         remessa.exportarRemessa(lancamentos, convenio, empresa);
 
-        convenioService.atualizarSequencial(convenio.getId(), convenio.getSequencial()+1l);
+        convenioService.atualizarSequencial(convenio.getId(), convenio.getSequencial() + 1l);
 
     }
 
     @Override
-    public ResponseEntity<byte[]> pegarRemessa(Long id) throws IOException {
-//        regra para atualizar situacao da remessa
-        Remessa remessa = remessaService.listarPorId(id);
-        String situacao = "BAIXADA";
-        remessaService.atualizarSituacao(id, situacao);
-        InputStream stream = this.getClass().getResourceAsStream("/remessa/" + remessa.getNome() + ".TXT");
-        byte [] arquivo = IOUtils.toByteArray(stream);
+    public byte[] pegarRemessa(Long id) throws IOException {
 
-        return ResponseEntity.ok().header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE)
-                .body(arquivo);
+        Remessa remessa = remessaService.listarPorId(id);
+
+        File file = new File("src/main/resources/remessa/" + remessa.getNome() + ".TXT");
+
+        if (!file.exists()) {
+            throw new RemessaNaoEncontradaException();
+        } else {
+            FileReader fileReader = new FileReader(file);
+            byte[] arquivo = IOUtils.toByteArray(fileReader);
+            fileReader.close();
+
+            // regra para atualizar situacao da remessa
+            String situacao = "BAIXADA";
+            remessaService.atualizarSituacao(id, situacao);
+
+            return arquivo;
+        }
     }
 
-    private Optional <Lancamento> buscarRecursoExistente(Long id) {
-        Optional <Lancamento> lancamento = repository.findById(id);
-//        if (!lancamento.isPresent()) {
-//            throw  new IllegalArgumentException();
-//        }
+    private Lancamento buscarRecursoExistente(Long id) {
+        Lancamento lancamento = repository.getOne(id);
+        if (lancamento == null) {
+            throw new EntityNotFoundException();
+        }
         return lancamento;
     }
 

@@ -1,6 +1,7 @@
 package br.prgomesr.debitoapi.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
@@ -12,9 +13,17 @@ public class Remessa {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotNull
     private String nome;
+
+    @NotNull
     private LocalDate data;
+
+    @NotNull
     private BigDecimal valor;
+
+    @NotNull
     private String situacao;
 
     public Long getId() {

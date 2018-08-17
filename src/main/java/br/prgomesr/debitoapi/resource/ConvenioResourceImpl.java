@@ -2,11 +2,9 @@ package br.prgomesr.debitoapi.resource;
 
 import br.prgomesr.debitoapi.model.Convenio;
 import br.prgomesr.debitoapi.service.ConvenioService;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -24,7 +22,8 @@ public class ConvenioResourceImpl implements ConvenioResource {
     }
 
     @Override
-    public Convenio listarPorId(Long id) {
+    @GetMapping("/{id}")
+    public Convenio listarPorId(@PathVariable Long id) {
         return service.listarPorId(id);
     }
 

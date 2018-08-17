@@ -1,22 +1,29 @@
 package br.prgomesr.debitoapi.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 @Entity
 @Table(name = "convenio")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Convenio {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
     private String numero;
 
+    @NotNull
     private Long sequencial;
 
     @ManyToOne
     @JoinColumn(name = "conta_id")
+    @NotNull
     private Conta conta;
 
     public Long getId() {

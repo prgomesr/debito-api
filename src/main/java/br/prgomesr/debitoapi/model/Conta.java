@@ -1,6 +1,7 @@
 package br.prgomesr.debitoapi.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 @Entity
@@ -11,11 +12,13 @@ public class Conta {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
     private String agencia;
 
     @Column(name = "digito_agencia")
     private String digitoAgencia;
 
+    @NotNull
     private String numero;
 
     @Column(name = "digito_conta")
@@ -26,6 +29,7 @@ public class Conta {
 
     @ManyToOne
     @JoinColumn(name = "empresa_id")
+    @NotNull
     private Empresa empresa;
 
     public Long getId() {
