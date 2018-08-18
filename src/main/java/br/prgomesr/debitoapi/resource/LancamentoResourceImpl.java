@@ -2,16 +2,15 @@ package br.prgomesr.debitoapi.resource;
 
 import br.prgomesr.debitoapi.event.RecursoCriadoEvent;
 import br.prgomesr.debitoapi.exceptionhandler.DebitoExceptionHandler.Erro;
-import br.prgomesr.debitoapi.model.Convenio;
-import br.prgomesr.debitoapi.model.Empresa;
 import br.prgomesr.debitoapi.model.Lancamento;
 import br.prgomesr.debitoapi.repository.filter.LancamentoFilter;
 import br.prgomesr.debitoapi.repository.projection.LancamentoProjection;
 import br.prgomesr.debitoapi.service.ConvenioService;
-import br.prgomesr.debitoapi.service.EmpresaService;
 import br.prgomesr.debitoapi.service.LancamentoService;
 import br.prgomesr.debitoapi.service.exception.ClienteInexistenteInativoException;
+import br.prgomesr.debitoapi.service.exception.LancamentosRemessaVaziaException;
 import br.prgomesr.debitoapi.service.exception.RemessaNaoEncontradaException;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
@@ -40,9 +39,6 @@ public class LancamentoResourceImpl implements LancamentoResource {
 
     @Autowired
     private ConvenioService convenioService;
-
-    @Autowired
-    private EmpresaService empresaService;
 
     @Autowired
     private MessageSource messageSource;
@@ -94,17 +90,9 @@ public class LancamentoResourceImpl implements LancamentoResource {
     @GetMapping("gerar-remessa")
     public ResponseEntity exportarRemessa(LancamentoFilter filter) throws IOException {
         List<Lancamento> lancamentos = listarDetalhes(filter);
-        // Instanciando convenio
-        Convenio convenio = convenioService
-                .listarPorId(lancamentos.get(0).getConvenio().getId());
-        // Instanciando empresa
-        Empresa empresa = empresaService
-                .listarPorId(lancamentos.get(0).getConvenio().getConta().getEmpresa().getId());
-        try {
-            service.exportarRemessa(lancamentos, convenio, empresa);
-        } catch (IOException e) {
-            throw new IllegalArgumentException("erro " + e);
-        }
+
+        service.exportarRemessa(lancamentos);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(lancamentos);
     }
 
@@ -119,7 +107,7 @@ public class LancamentoResourceImpl implements LancamentoResource {
     @ExceptionHandler({ClienteInexistenteInativoException.class})
     public ResponseEntity<Object> handleClienteInexistenteInativoException(ClienteInexistenteInativoException ex) {
         String mensagemUsuario = messageSource.getMessage("cliente.inexistente-ou-inativo", null, LocaleContextHolder.getLocale());
-        String mensagemDesenvolvedor = ex.toString();
+        String mensagemDesenvolvedor = ExceptionUtils.getRootCauseMessage(ex);
         List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario, mensagemDesenvolvedor));
         return ResponseEntity.badRequest().body(erros);
     }
@@ -127,7 +115,15 @@ public class LancamentoResourceImpl implements LancamentoResource {
     @ExceptionHandler({RemessaNaoEncontradaException.class})
     public ResponseEntity<Object> handleRemessaNaoEncontradaException(RemessaNaoEncontradaException ex) {
         String mensagemUsuario = messageSource.getMessage("remessa.inexistente", null, LocaleContextHolder.getLocale());
-        String mensagemDesenvolvedor = ex.toString();
+        String mensagemDesenvolvedor = ExceptionUtils.getRootCauseMessage(ex);
+        List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario, mensagemDesenvolvedor));
+        return ResponseEntity.badRequest().body(erros);
+    }
+
+    @ExceptionHandler({LancamentosRemessaVaziaException.class})
+    public ResponseEntity<Object> handleLancamentosRemessaVaziaException(LancamentosRemessaVaziaException ex) {
+        String mensagemUsuario = messageSource.getMessage("remessa.vazia", null, LocaleContextHolder.getLocale());
+        String mensagemDesenvolvedor = ExceptionUtils.getRootCauseMessage(ex);
         List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario, mensagemDesenvolvedor));
         return ResponseEntity.badRequest().body(erros);
     }

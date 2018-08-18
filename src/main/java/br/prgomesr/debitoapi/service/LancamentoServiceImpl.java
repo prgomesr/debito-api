@@ -5,6 +5,7 @@ import br.prgomesr.debitoapi.repository.Lancamentos;
 import br.prgomesr.debitoapi.repository.filter.LancamentoFilter;
 import br.prgomesr.debitoapi.repository.projection.LancamentoProjection;
 import br.prgomesr.debitoapi.service.exception.ClienteInexistenteInativoException;
+import br.prgomesr.debitoapi.service.exception.LancamentosRemessaVaziaException;
 import br.prgomesr.debitoapi.service.exception.RemessaNaoEncontradaException;
 import br.prgomesr.debitoapi.util.remessa.bb.GerarRemessa;
 import br.prgomesr.debitoapi.util.remessa.bb.GerarRemessaInclusao;
@@ -38,6 +39,9 @@ public class LancamentoServiceImpl implements LancamentoService {
 
     @Autowired
     private RemessaService remessaService;
+
+    @Autowired
+    private EmpresaService empresaService;
 
     @Autowired
     private ClienteService clienteService;
@@ -81,11 +85,21 @@ public class LancamentoServiceImpl implements LancamentoService {
     }
 
     @Override
-    public void exportarRemessa(List<Lancamento> lancamentos, Convenio convenio, Empresa empresa) throws IOException {
+    public void exportarRemessa(List<Lancamento> lancamentos) throws IOException {
 
-        remessa.exportarRemessa(lancamentos, convenio, empresa);
+        if (lancamentos.size() > 0) {
+            // Instanciando convenio
+            Convenio convenio = convenioService
+                    .listarPorId(lancamentos.get(0).getConvenio().getId());
+            // Instanciando empresa
+            Empresa empresa = empresaService
+                    .listarPorId(lancamentos.get(0).getConvenio().getConta().getEmpresa().getId());
+            remessa.exportarRemessa(lancamentos, convenio, empresa);
 
-        convenioService.atualizarSequencial(convenio.getId(), convenio.getSequencial() + 1l);
+            convenioService.atualizarSequencial(convenio.getId(), convenio.getSequencial() + 1l);
+        } else {
+            throw new LancamentosRemessaVaziaException();
+        }
 
     }
 

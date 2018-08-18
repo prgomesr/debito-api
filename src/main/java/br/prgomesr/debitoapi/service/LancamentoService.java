@@ -18,7 +18,7 @@ public interface LancamentoService {
     Lancamento cadastrar(Lancamento lancamento);
     Lancamento atualizar(Long id, Lancamento lancamento);
     void remover(Long id);
-    public void exportarRemessa(List<Lancamento> lancamentos, Convenio convenio, Empresa empresa) throws IOException;
+    public void exportarRemessa(List<Lancamento> lancamentos) throws IOException;
     public byte [] pegarRemessa(Long id) throws IOException;
 
 }
