@@ -1,20 +1,14 @@
 package br.prgomesr.debitoapi.resource;
 
 import br.prgomesr.debitoapi.event.RecursoCriadoEvent;
-import br.prgomesr.debitoapi.exceptionhandler.DebitoExceptionHandler.Erro;
 import br.prgomesr.debitoapi.model.Lancamento;
 import br.prgomesr.debitoapi.repository.filter.LancamentoFilter;
 import br.prgomesr.debitoapi.repository.projection.LancamentoProjection;
 import br.prgomesr.debitoapi.service.ConvenioService;
 import br.prgomesr.debitoapi.service.LancamentoService;
-import br.prgomesr.debitoapi.service.exception.ClienteInexistenteInativoException;
-import br.prgomesr.debitoapi.service.exception.LancamentosRemessaVaziaException;
-import br.prgomesr.debitoapi.service.exception.RemessaNaoEncontradaException;
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -24,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -47,7 +40,7 @@ public class LancamentoResourceImpl implements LancamentoResource {
     @Override
     @GetMapping(params = "detalhes")
     public List<Lancamento> listarDetalhes(LancamentoFilter filter) {
-        return service.listarPorLote(filter);
+        return service.listarDetalhes(filter);
     }
 
     @Override
@@ -104,28 +97,6 @@ public class LancamentoResourceImpl implements LancamentoResource {
                 .body(arquivo);
     }
 
-    @ExceptionHandler({ClienteInexistenteInativoException.class})
-    public ResponseEntity<Object> handleClienteInexistenteInativoException(ClienteInexistenteInativoException ex) {
-        String mensagemUsuario = messageSource.getMessage("cliente.inexistente-ou-inativo", null, LocaleContextHolder.getLocale());
-        String mensagemDesenvolvedor = ExceptionUtils.getRootCauseMessage(ex);
-        List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario, mensagemDesenvolvedor));
-        return ResponseEntity.badRequest().body(erros);
-    }
 
-    @ExceptionHandler({RemessaNaoEncontradaException.class})
-    public ResponseEntity<Object> handleRemessaNaoEncontradaException(RemessaNaoEncontradaException ex) {
-        String mensagemUsuario = messageSource.getMessage("remessa.inexistente", null, LocaleContextHolder.getLocale());
-        String mensagemDesenvolvedor = ExceptionUtils.getRootCauseMessage(ex);
-        List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario, mensagemDesenvolvedor));
-        return ResponseEntity.badRequest().body(erros);
-    }
-
-    @ExceptionHandler({LancamentosRemessaVaziaException.class})
-    public ResponseEntity<Object> handleLancamentosRemessaVaziaException(LancamentosRemessaVaziaException ex) {
-        String mensagemUsuario = messageSource.getMessage("remessa.vazia", null, LocaleContextHolder.getLocale());
-        String mensagemDesenvolvedor = ExceptionUtils.getRootCauseMessage(ex);
-        List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario, mensagemDesenvolvedor));
-        return ResponseEntity.badRequest().body(erros);
-    }
 
 }

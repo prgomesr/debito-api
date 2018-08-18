@@ -1,5 +1,8 @@
 package br.prgomesr.debitoapi.exceptionhandler;
 
+import br.prgomesr.debitoapi.service.exception.ClienteInexistenteInativoException;
+import br.prgomesr.debitoapi.service.exception.LancamentosRemessaVaziaException;
+import br.prgomesr.debitoapi.service.exception.RemessaNaoEncontradaException;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -67,6 +70,30 @@ public class DebitoExceptionHandler extends ResponseEntityExceptionHandler {
         String mensagemDesenvolvedor = ExceptionUtils.getRootCauseMessage(ex);
         List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario, mensagemDesenvolvedor));
         return handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
+
+    @ExceptionHandler({ClienteInexistenteInativoException.class})
+    public ResponseEntity<Object> handleClienteInexistenteInativoException(ClienteInexistenteInativoException ex) {
+        String mensagemUsuario = messageSource.getMessage("cliente.inexistente-ou-inativo", null, LocaleContextHolder.getLocale());
+        String mensagemDesenvolvedor = ExceptionUtils.getRootCauseMessage(ex);
+        List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario, mensagemDesenvolvedor));
+        return ResponseEntity.badRequest().body(erros);
+    }
+
+    @ExceptionHandler({RemessaNaoEncontradaException.class})
+    public ResponseEntity<Object> handleRemessaNaoEncontradaException(RemessaNaoEncontradaException ex) {
+        String mensagemUsuario = messageSource.getMessage("remessa.inexistente", null, LocaleContextHolder.getLocale());
+        String mensagemDesenvolvedor = ExceptionUtils.getRootCauseMessage(ex);
+        List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario, mensagemDesenvolvedor));
+        return ResponseEntity.badRequest().body(erros);
+    }
+
+    @ExceptionHandler({LancamentosRemessaVaziaException.class})
+    public ResponseEntity<Object> handleLancamentosRemessaVaziaException(LancamentosRemessaVaziaException ex) {
+        String mensagemUsuario = messageSource.getMessage("remessa.vazia", null, LocaleContextHolder.getLocale());
+        String mensagemDesenvolvedor = ExceptionUtils.getRootCauseMessage(ex);
+        List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario, mensagemDesenvolvedor));
+        return ResponseEntity.badRequest().body(erros);
     }
 
     private List<Erro> listaErros(BindingResult result) {

@@ -3,10 +3,8 @@ package br.prgomesr.debitoapi.resource;
 import br.prgomesr.debitoapi.model.Cliente;
 import br.prgomesr.debitoapi.service.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -24,7 +22,8 @@ public class ClienteResourceImpl implements ClienteResource {
     }
 
     @Override
-    public Cliente listarPorId(Long id) {
+    @GetMapping("/{id}")
+    public Cliente listarPorId(@PathVariable Long id) {
         return service.listarPorId(id);
     }
 
@@ -36,6 +35,13 @@ public class ClienteResourceImpl implements ClienteResource {
     @Override
     public Cliente atualizar(Long id, Cliente cliente) {
         return service.atualizar(id, cliente);
+    }
+
+    @Override
+    @PutMapping("/{id}/ativo")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public Cliente atualizarAtivo(@PathVariable Long id, @RequestBody Boolean ativo) {
+        return service.atualizarAtivo(id, ativo);
     }
 
     @Override

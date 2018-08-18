@@ -12,7 +12,6 @@ import br.prgomesr.debitoapi.util.remessa.bb.GerarRemessaInclusao;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -32,9 +31,6 @@ public class LancamentoServiceImpl implements LancamentoService {
     private GerarRemessa remessa;
 
     @Autowired
-    private GerarRemessaInclusao remessaInclusao;
-
-    @Autowired
     private ConvenioService convenioService;
 
     @Autowired
@@ -47,7 +43,7 @@ public class LancamentoServiceImpl implements LancamentoService {
     private ClienteService clienteService;
 
     @Override
-    public List<Lancamento> listarPorLote(LancamentoFilter filter) {
+    public List<Lancamento> listarDetalhes(LancamentoFilter filter) {
         return repository.filtrar(filter);
     }
 

@@ -10,5 +10,6 @@ public interface ClienteResource {
     Cliente listarPorId(Long id);
     Cliente cadastrar(Cliente cliente);
     Cliente atualizar(Long id, Cliente cliente);
+    Cliente atualizarAtivo(Long id, Boolean ativo);
     void remover(Long id);
 }
