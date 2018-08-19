@@ -6,10 +6,13 @@ import br.prgomesr.debitoapi.repository.filter.LancamentoFilter;
 import br.prgomesr.debitoapi.repository.projection.LancamentoProjection;
 import br.prgomesr.debitoapi.service.exception.ClienteInexistenteInativoException;
 import br.prgomesr.debitoapi.service.exception.LancamentosRemessaVaziaException;
+import br.prgomesr.debitoapi.service.exception.RecursoVazioException;
 import br.prgomesr.debitoapi.service.exception.RemessaNaoEncontradaException;
+import br.prgomesr.debitoapi.util.remessa.bb.CriarIdentificadorBanco;
 import br.prgomesr.debitoapi.util.remessa.bb.GerarRemessa;
 import br.prgomesr.debitoapi.util.remessa.bb.GerarRemessaInclusao;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +22,8 @@ import javax.persistence.EntityNotFoundException;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -127,6 +132,30 @@ public class LancamentoServiceImpl implements LancamentoService {
             throw new EntityNotFoundException();
         }
         return lancamento;
+    }
+
+    @Override
+    public void cadastrarPorLote(LancamentoFilter filter, LocalDate vencimento) {
+        if (filter != null) {
+            List<Lancamento> lancamentos = listarDetalhes(filter);
+            List<Lancamento> novosLancamentos = new ArrayList<>();
+            lancamentos.forEach(lancamento -> {
+                Lancamento novoLancamento = new Lancamento();
+
+                novoLancamento.setValor(lancamento.getValor());
+                novoLancamento.setVencimento(vencimento);
+                novoLancamento.setSituacao(Situacao.PENDENTE);
+                novoLancamento.setCliente(lancamento.getCliente());
+                novoLancamento.setConvenio(lancamento.getConvenio());
+
+                novosLancamentos.add(novoLancamento);
+            });
+            novosLancamentos.forEach(lancamento -> {
+                cadastrar(lancamento);
+            });
+        } else {
+            throw new RecursoVazioException();
+        }
     }
 
 }

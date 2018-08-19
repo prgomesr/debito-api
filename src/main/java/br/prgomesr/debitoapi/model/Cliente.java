@@ -32,7 +32,6 @@ public class Cliente {
     private String digitoConta;
 
     @Column(name = "identificador_banco")
-    @NotNull
     private String identificadorBanco;
 
     @NotNull
@@ -141,5 +140,6 @@ public class Cliente {
     public int hashCode() {
         return Objects.hash(getId());
     }
+
 
 }

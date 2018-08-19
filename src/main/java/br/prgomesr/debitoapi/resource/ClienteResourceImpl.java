@@ -1,11 +1,16 @@
 package br.prgomesr.debitoapi.resource;
 
+import br.prgomesr.debitoapi.event.RecursoCriadoEvent;
 import br.prgomesr.debitoapi.model.Cliente;
 import br.prgomesr.debitoapi.service.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -14,6 +19,9 @@ public class ClienteResourceImpl implements ClienteResource {
 
     @Autowired
     private ClienteService service;
+
+    @Autowired
+    private ApplicationEventPublisher publisher;
 
     @Override
     @GetMapping
@@ -28,13 +36,18 @@ public class ClienteResourceImpl implements ClienteResource {
     }
 
     @Override
-    public Cliente cadastrar(Cliente cliente) {
-        return service.cadastrar(cliente);
+    @PostMapping
+    public ResponseEntity<Cliente> cadastrar(@Valid @RequestBody Cliente cliente, HttpServletResponse response) {
+        Cliente clienteSalvo = service.cadastrar(cliente);
+        publisher.publishEvent(new RecursoCriadoEvent(this, response, clienteSalvo.getId()));
+        return ResponseEntity.status(HttpStatus.CREATED).body(clienteSalvo);
     }
 
     @Override
-    public Cliente atualizar(Long id, Cliente cliente) {
-        return service.atualizar(id, cliente);
+    @PutMapping("/{id}")
+    public ResponseEntity<Cliente> atualizar(@PathVariable Long id, @Valid @RequestBody Cliente cliente) {
+        Cliente clienteSalvo = service.atualizar(id, cliente);
+        return ResponseEntity.ok(clienteSalvo);
     }
 
     @Override

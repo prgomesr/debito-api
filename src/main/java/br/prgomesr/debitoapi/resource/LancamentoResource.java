@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 public interface LancamentoResource {
@@ -20,5 +21,6 @@ public interface LancamentoResource {
     void remover(Long id);
     public ResponseEntity exportarRemessa(LancamentoFilter filter) throws IOException;
     public ResponseEntity<?> remessa(Long id) throws IOException;
+    void cadastrarPorLote(LancamentoFilter filter, LocalDate vencimento);
 
 }

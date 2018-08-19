@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -29,13 +30,6 @@ public class LancamentoResourceImpl implements LancamentoResource {
 
     @Autowired
     private ApplicationEventPublisher publisher;
-
-    @Autowired
-    private ConvenioService convenioService;
-
-    @Autowired
-    private MessageSource messageSource;
-
 
     @Override
     @GetMapping(params = "detalhes")
@@ -97,6 +91,12 @@ public class LancamentoResourceImpl implements LancamentoResource {
                 .body(arquivo);
     }
 
+    @Override
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("cadastrar-por-lote")
+    public void cadastrarPorLote(LancamentoFilter filter, @RequestBody LocalDate vencimento) {
+        service.cadastrarPorLote(filter, vencimento);
+    }
 
 
 }

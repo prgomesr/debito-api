@@ -2,6 +2,7 @@ package br.prgomesr.debitoapi.exceptionhandler;
 
 import br.prgomesr.debitoapi.service.exception.ClienteInexistenteInativoException;
 import br.prgomesr.debitoapi.service.exception.LancamentosRemessaVaziaException;
+import br.prgomesr.debitoapi.service.exception.RecursoVazioException;
 import br.prgomesr.debitoapi.service.exception.RemessaNaoEncontradaException;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,6 +91,14 @@ public class DebitoExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({LancamentosRemessaVaziaException.class})
     public ResponseEntity<Object> handleLancamentosRemessaVaziaException(LancamentosRemessaVaziaException ex) {
+        String mensagemUsuario = messageSource.getMessage("remessa.vazia", null, LocaleContextHolder.getLocale());
+        String mensagemDesenvolvedor = ExceptionUtils.getRootCauseMessage(ex);
+        List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario, mensagemDesenvolvedor));
+        return ResponseEntity.badRequest().body(erros);
+    }
+
+    @ExceptionHandler({RecursoVazioException.class})
+    public ResponseEntity<Object> handleRecursoVazioException(RecursoVazioException ex) {
         String mensagemUsuario = messageSource.getMessage("remessa.vazia", null, LocaleContextHolder.getLocale());
         String mensagemDesenvolvedor = ExceptionUtils.getRootCauseMessage(ex);
         List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario, mensagemDesenvolvedor));

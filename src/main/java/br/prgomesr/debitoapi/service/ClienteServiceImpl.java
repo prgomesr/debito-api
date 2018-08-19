@@ -2,6 +2,7 @@ package br.prgomesr.debitoapi.service;
 
 import br.prgomesr.debitoapi.model.Cliente;
 import br.prgomesr.debitoapi.repository.Clientes;
+import br.prgomesr.debitoapi.util.remessa.bb.CriarIdentificadorBanco;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -27,14 +28,16 @@ public class ClienteServiceImpl implements ClienteService {
 
     @Override
     public Cliente cadastrar(Cliente cliente) {
+        criarIdentificador(cliente);
         return repository.save(cliente);
     }
 
     @Override
     public Cliente atualizar(Long id, Cliente cliente) {
-        Cliente clientesalvo = buscarRegistroExistente(id);
-        BeanUtils.copyProperties(cliente, clientesalvo, "id");
-        return repository.save(clientesalvo);
+        Cliente clienteSalvo = buscarRegistroExistente(id);
+        BeanUtils.copyProperties(cliente, clienteSalvo, "id");
+        criarIdentificador(clienteSalvo);
+        return repository.save(clienteSalvo);
     }
 
     @Override
@@ -60,5 +63,9 @@ public class ClienteServiceImpl implements ClienteService {
             throw new EmptyResultDataAccessException(1);
         }
         return cliente;
+    }
+
+    private void criarIdentificador(Cliente cliente) {
+        cliente.setIdentificadorBanco(CriarIdentificadorBanco.criar(cliente.getAgencia(), cliente.getConta()));
     }
 }
