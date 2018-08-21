@@ -91,7 +91,7 @@ public class LancamentoServiceImpl implements LancamentoService {
         if (lancamentos.size() > 0) {
             // Instanciando convenio
             Convenio convenio = convenioService
-                    .listarPorId(lancamentos.get(0).getConvenio().getId());
+                    .buscarRecursoExistente(lancamentos.get(0).getConvenio().getId());
             // Instanciando empresa
             Empresa empresa = empresaService
                     .listarPorId(lancamentos.get(0).getConvenio().getConta().getEmpresa().getId());
@@ -126,14 +126,6 @@ public class LancamentoServiceImpl implements LancamentoService {
         }
     }
 
-    private Lancamento buscarRecursoExistente(Long id) {
-        Lancamento lancamento = repository.getOne(id);
-        if (lancamento == null) {
-            throw new EntityNotFoundException();
-        }
-        return lancamento;
-    }
-
     @Override
     public void cadastrarPorLote(LancamentoFilter filter, LocalDate vencimento) {
         if (filter != null) {
@@ -156,6 +148,14 @@ public class LancamentoServiceImpl implements LancamentoService {
         } else {
             throw new RecursoVazioException();
         }
+    }
+
+    private Lancamento buscarRecursoExistente(Long id) {
+        Lancamento lancamento = repository.getOne(id);
+        if (lancamento == null) {
+            throw new EntityNotFoundException();
+        }
+        return lancamento;
     }
 
 }

@@ -2,7 +2,10 @@ package br.prgomesr.debitoapi.service;
 
 import br.prgomesr.debitoapi.model.Convenio;
 import br.prgomesr.debitoapi.repository.Convenios;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,8 +22,9 @@ public class ConvenioServiceImpl implements ConvenioService {
     }
 
     @Override
-    public Convenio listarPorId(Long id) {
-        return repository.getOne(id);
+    public ResponseEntity<Convenio> listarPorId(Long id) {
+        Convenio convenio = buscarRecursoExistente(id);
+        return convenio != null ? ResponseEntity.ok(convenio) : ResponseEntity.notFound().build();
     }
 
     @Override
@@ -30,13 +34,14 @@ public class ConvenioServiceImpl implements ConvenioService {
 
     @Override
     public Convenio atualizar(Long id, Convenio convenio) {
-        convenio = listarPorId(id);
-        return repository.save(convenio);
+        Convenio convenioSalvo = buscarRecursoExistente(id);
+        BeanUtils.copyProperties(convenio, convenioSalvo, "id");
+        return repository.save(convenioSalvo);
     }
 
     @Override
     public void atualizarSequencial(Long id, Long sequencial) {
-        Convenio convenio = listarPorId(id);
+        Convenio convenio = buscarRecursoExistente(id);
         convenio.setSequencial(sequencial);
         repository.save(convenio);
     }
@@ -44,6 +49,14 @@ public class ConvenioServiceImpl implements ConvenioService {
     @Override
     public void remover(Long id) {
         repository.deleteById(id);
+    }
+
+    public Convenio buscarRecursoExistente(Long id) {
+        Convenio convenio = repository.getOne(id);
+        if (convenio == null) {
+            throw new EmptyResultDataAccessException(1);
+        }
+        return convenio;
     }
 
 
