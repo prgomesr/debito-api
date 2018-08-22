@@ -4,7 +4,8 @@ import br.prgomesr.debitoapi.service.exception.ClienteInexistenteInativoExceptio
 import br.prgomesr.debitoapi.service.exception.LancamentosRemessaVaziaException;
 import br.prgomesr.debitoapi.service.exception.RecursoVazioException;
 import br.prgomesr.debitoapi.service.exception.RemessaNaoEncontradaException;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.hibernate.TransientPropertyValueException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -65,7 +66,15 @@ public class DebitoExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
-    @ExceptionHandler({ DataIntegrityViolationException.class } )
+    @ExceptionHandler({TransientPropertyValueException.class})
+    public ResponseEntity<Object> handleTransientPropertyValueException(TransientPropertyValueException ex, WebRequest request) {
+        String mensagemUsuario = messageSource.getMessage("recurso.operacao-nao-permitida", null, LocaleContextHolder.getLocale());
+        String mensagemDesenvolvedor = ExceptionUtils.getRootCauseMessage(ex);
+        List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario, mensagemDesenvolvedor));
+        return handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
+
+    @ExceptionHandler({DataIntegrityViolationException.class})
     public ResponseEntity<Object> handleDataIntegrityViolationException(DataIntegrityViolationException ex, WebRequest request) {
         String mensagemUsuario = messageSource.getMessage("recurso.operacao-nao-permitida", null, LocaleContextHolder.getLocale());
         String mensagemDesenvolvedor = ExceptionUtils.getRootCauseMessage(ex);

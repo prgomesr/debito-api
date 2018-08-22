@@ -4,11 +4,11 @@ import br.prgomesr.debitoapi.event.RecursoCriadoEvent;
 import br.prgomesr.debitoapi.model.Lancamento;
 import br.prgomesr.debitoapi.repository.filter.LancamentoFilter;
 import br.prgomesr.debitoapi.repository.projection.LancamentoProjection;
-import br.prgomesr.debitoapi.service.ConvenioService;
 import br.prgomesr.debitoapi.service.LancamentoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -41,6 +41,12 @@ public class LancamentoResourceImpl implements LancamentoResource {
     @GetMapping
     public List<LancamentoProjection> listar(LancamentoFilter filter) {
         return service.listar(filter);
+    }
+
+    @Override
+    @GetMapping("/paginacao")
+    public Page<LancamentoProjection> listarComPaginacao(LancamentoFilter filter, Pageable pageable) {
+        return service.listarComPaginancao(filter, pageable);
     }
 
     @Override

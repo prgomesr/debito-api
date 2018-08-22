@@ -5,6 +5,8 @@ import br.prgomesr.debitoapi.model.Empresa;
 import br.prgomesr.debitoapi.model.Lancamento;
 import br.prgomesr.debitoapi.repository.filter.LancamentoFilter;
 import br.prgomesr.debitoapi.repository.projection.LancamentoProjection;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
@@ -15,6 +17,7 @@ public interface LancamentoService {
 
     List<Lancamento> listarDetalhes(LancamentoFilter filter);
     List<LancamentoProjection> listar(LancamentoFilter filter);
+    Page<LancamentoProjection> listarComPaginancao(LancamentoFilter filter, Pageable pageable);
     ResponseEntity <Lancamento> listarPorId(Long id);
     Lancamento cadastrar(Lancamento lancamento);
     Lancamento atualizar(Long id, Lancamento lancamento);

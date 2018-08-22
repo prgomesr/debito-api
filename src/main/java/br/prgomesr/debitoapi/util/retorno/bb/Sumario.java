@@ -1,4 +1,4 @@
-package br.prgomesr.debitoapi.util.remessa.bb;
+package br.prgomesr.debitoapi.util.retorno.bb;
 
 import org.jrimum.texgit.Record;
 
@@ -16,19 +16,13 @@ public class Sumario {
         }
     }
 
-    public String getCodRegistro() {
-        return record.getValue("Z01-CodRegistro");
-    }
 
     public String getTotalRegistros() {
-        return record.getValue("Z02-TotalRegistros");
+        return record.getValue("TotalRegistros");
     }
 
     public BigDecimal getValorTotalRegistros() {
-        return record.getValue("Z03-ValorTotalRegistros");
+        return record.getValue("ValorTotalRegistros");
     }
 
-    public String getReservadoFuturo() {
-        return record.getValue("Z04-ReservadoFuturo");
-    }
 }

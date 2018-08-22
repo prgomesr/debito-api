@@ -8,13 +8,12 @@ import br.prgomesr.debitoapi.service.exception.ClienteInexistenteInativoExceptio
 import br.prgomesr.debitoapi.service.exception.LancamentosRemessaVaziaException;
 import br.prgomesr.debitoapi.service.exception.RecursoVazioException;
 import br.prgomesr.debitoapi.service.exception.RemessaNaoEncontradaException;
-import br.prgomesr.debitoapi.util.remessa.bb.CriarIdentificadorBanco;
 import br.prgomesr.debitoapi.util.remessa.bb.GerarRemessa;
-import br.prgomesr.debitoapi.util.remessa.bb.GerarRemessaInclusao;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -55,6 +54,11 @@ public class LancamentoServiceImpl implements LancamentoService {
     @Override
     public List<LancamentoProjection> listar(LancamentoFilter filter) {
         return repository.resumir(filter);
+    }
+
+    @Override
+    public Page<LancamentoProjection> listarComPaginancao(LancamentoFilter filter, Pageable pageable) {
+        return repository.resumirComPaginacao(filter, pageable);
     }
 
 

@@ -1,5 +1,8 @@
 package br.prgomesr.debitoapi.util.remessa.bb;
 
+import br.prgomesr.debitoapi.util.retorno.bb.Cabecalho;
+import br.prgomesr.debitoapi.util.retorno.bb.Sumario;
+import br.prgomesr.debitoapi.util.retorno.bb.Transacao;
 import org.jrimum.texgit.FlatFile;
 import org.jrimum.texgit.Record;
 import org.jrimum.texgit.Texgit;
