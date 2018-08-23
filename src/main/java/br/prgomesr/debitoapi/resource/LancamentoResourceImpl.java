@@ -19,9 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -119,14 +117,10 @@ public class LancamentoResourceImpl implements LancamentoResource {
 
     @Override
     @PostMapping("/anexo")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasAuthority('ROLE_CADASTRAR')")
-    public String uploadArquivo(MultipartFile anexo) throws IOException {
-        OutputStream out = new FileOutputStream("src/main/resources/retorno/" +
-                anexo.getOriginalFilename());
-        out.write(anexo.getBytes());
-        out.close();
-        return "ok";
+    public void uploadArquivo(@RequestParam MultipartFile anexo) {
+        service.tratarRetorno(anexo);
     }
-
 
 }

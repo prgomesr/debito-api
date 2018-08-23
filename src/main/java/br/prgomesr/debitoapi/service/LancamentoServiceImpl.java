@@ -9,6 +9,9 @@ import br.prgomesr.debitoapi.service.exception.LancamentosRemessaVaziaException;
 import br.prgomesr.debitoapi.service.exception.RecursoVazioException;
 import br.prgomesr.debitoapi.service.exception.RemessaNaoEncontradaException;
 import br.prgomesr.debitoapi.util.remessa.bb.GerarRemessa;
+import br.prgomesr.debitoapi.util.retorno.bb.ArquivoRetorno;
+import br.prgomesr.debitoapi.util.retorno.bb.Transacao;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;
 import java.io.File;
@@ -152,6 +156,26 @@ public class LancamentoServiceImpl implements LancamentoService {
         } else {
             throw new RecursoVazioException();
         }
+    }
+
+    @Override
+    public void tratarRetorno(MultipartFile anexo) {
+        try {
+            if (!anexo.isEmpty()) {
+                File file = File.createTempFile(anexo.getOriginalFilename(), "");
+                if (file.exists()) {
+                    FileUtils.copyInputStreamToFile(anexo.getInputStream(), file);
+                    ArquivoRetorno retorno = new ArquivoRetorno(file);
+                    List<Transacao> registros = retorno.getTransacoes();
+                    registros.forEach(registro -> {
+                        System.out.println(registro.getCodLancamento());
+                    });
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Ocorreu um erro ao tratar arquivo de retorno" + e.getMessage());
+        }
+
     }
 
     private Lancamento buscarRecursoExistente(Long id) {

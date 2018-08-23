@@ -1,5 +1,6 @@
 package br.prgomesr.debitoapi.resource;
 
+import br.prgomesr.debitoapi.dto.Anexo;
 import br.prgomesr.debitoapi.model.Lancamento;
 import br.prgomesr.debitoapi.model.Remessa;
 import br.prgomesr.debitoapi.repository.filter.LancamentoFilter;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
@@ -27,6 +29,6 @@ public interface LancamentoResource {
     ResponseEntity exportarRemessa(LancamentoFilter filter) throws IOException;
     ResponseEntity<?> remessa(Long id) throws IOException;
     void cadastrarPorLote(LancamentoFilter filter, LocalDate vencimento);
-    String uploadArquivo(@RequestParam MultipartFile anexo) throws IOException;
+    void uploadArquivo(MultipartFile anexo);
 
 }
