@@ -33,4 +33,8 @@ public class Transacao {
         return record.getValue("CodRetorno");
     }
 
+    public String getCodLancamento() {
+        return  record.getValue("CodLancamento");
+    }
+
 }

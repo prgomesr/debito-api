@@ -1,0 +1,5 @@
+A125313               ASSOCIACAO REGION...001BANCO DO BRASIL     2018082200027104DEBITO AUTOMATICO                                                    
+E0001000099785            0001000000000997852018091000000000012381203365        Maria Laura Gomes Ferreira                                           0
+E0001000099785            0001000000000997852018101000000000012381203366        Maria Laura Gomes Ferreira                                           0
+E0001000099785            0001000000000997852018111000000000012381203367        Maria Laura Gomes Ferreira                                           0
+Z00000500000000000371436                                                                                                                              

@@ -34,7 +34,7 @@ public class GerarRemessaImpl implements GerarRemessa {
 
     @Override
     public void exportarRemessa(List<Lancamento> lancamentos, Convenio convenio, Empresa empresa) throws IOException {
-        if (lancamentos.size() > 0 ) {
+        if (lancamentos.size() > 0) {
             File layout = new File(ClassLoaders.
                     getResource("layouts/LayoutBBCNAB240Envio.txg.xml").getFile());
 
@@ -74,7 +74,6 @@ public class GerarRemessaImpl implements GerarRemessa {
     @Override
     public List<Record> createDetalhe(FlatFile<Record> flatFile, List<Lancamento> lancamentos) {
         List<Record> records = new ArrayList<>();
-//        int lote = Integer.valueOf(lancamentos.get(0).getLote()) + 1;
 
         valorTotal = new BigDecimal(0);
         count = 2;
@@ -87,13 +86,13 @@ public class GerarRemessaImpl implements GerarRemessa {
             detalhe.setValue("IdClienteBanco", lancamento.getCliente().getConta());
             detalhe.setValue("DataVencimento", DateFormat.YYYYMMDD.format(java.sql.Date.valueOf(lancamento.getVencimento())));
             detalhe.setValue("ValorDoDebito", lancamento.getValor());
-            detalhe.setValue("UsoEmpresa", StringUtils.abbreviate(lancamento.getCliente().getNome(), 60));
+            detalhe.setValue("CodLancamento", StringUtils.abbreviate(lancamento.getId().toString(), 11));
+            detalhe.setValue("UsoEmpresa", StringUtils.abbreviate(lancamento.getCliente().getNome(), 49));
 
             records.add(detalhe);
-//            lancamento.setLote(String.valueOf(lote));
 
             valorTotal = valorTotal.add(lancamento.getValor());
-            count ++;
+            count++;
 
         });
 

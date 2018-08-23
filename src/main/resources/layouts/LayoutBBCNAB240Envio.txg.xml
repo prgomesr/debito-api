@@ -51,7 +51,8 @@
 					<Field name="DataVencimento" length="8" type="DATE" format="DATE_YYYYMMDD"/>
 					<Field name="ValorDoDebito" length="15" type="BIGDECIMAL" format="DECIMAL_DD" padding="ZERO_LEFT"/>
 					<Field name="CodMoeda" length="2" value="03" />
-					<Field name="UsoEmpresa" length="60" />
+					<Field name="CodLancamento" length="11"/>
+					<Field name="UsoEmpresa" length="49" />
 					<Field name="ReservadoFuturo" length="20" />
 					<Field name="CodMovimento" length="1" value="0"/>
 				</GroupOfFields>

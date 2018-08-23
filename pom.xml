@@ -22,6 +22,11 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
+
+        <aws-java-sdk.version>1.11.274</aws-java-sdk.version>
+
+        <spring-security-oauth2.version>2.2.1.RELEASE</spring-security-oauth2.version>
+        <spring-security-jwt.version>1.0.9.RELEASE</spring-security-jwt.version>
     </properties>
 
     <dependencies>
@@ -93,6 +98,36 @@
             <version>3.7</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security.oauth</groupId>
+            <artifactId>spring-security-oauth2</artifactId>
+            <version>${spring-security-oauth2.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-jwt</artifactId>
+            <version>${spring-security-jwt.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- Amazon S3 -->
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk</artifactId>
+            <version>${aws-java-sdk.version}</version>
+        </dependency>
+
     </dependencies>
 
     <repositories>
@@ -121,12 +156,15 @@
                         <goals>
                             <goal>process</goal>
                         </goals>
-                        <phase>generate-sources</phase> <!-- Fase do ciclo de vida do maven onde o plugin vai ser executado -->
+                        <phase>generate-sources
+                        </phase> <!-- Fase do ciclo de vida do maven onde o plugin vai ser executado -->
                         <configuration>
                             <processors>
-                                <processor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</processor> <!-- Classe processadora que gerará os meta models-->
+                                <processor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor
+                                </processor> <!-- Classe processadora que gerará os meta models-->
                             </processors>
-                            <outputDirectory>src/main/java</outputDirectory> <!-- Diretório onde você deseja salvar os MetaModels -->
+                            <outputDirectory>src/main/java
+                            </outputDirectory> <!-- Diretório onde você deseja salvar os MetaModels -->
                         </configuration>
                     </execution>
                 </executions>

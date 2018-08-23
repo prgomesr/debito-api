@@ -13,11 +13,15 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -33,30 +37,35 @@ public class LancamentoResourceImpl implements LancamentoResource {
 
     @Override
     @GetMapping(params = "detalhes")
+    @PreAuthorize("hasAuthority('ROLE_PESQUISAR')")
     public List<Lancamento> listarDetalhes(LancamentoFilter filter) {
         return service.listarDetalhes(filter);
     }
 
     @Override
     @GetMapping
+    @PreAuthorize("hasAuthority('ROLE_PESQUISAR')")
     public List<LancamentoProjection> listar(LancamentoFilter filter) {
         return service.listar(filter);
     }
 
     @Override
     @GetMapping("/paginacao")
+    @PreAuthorize("hasAuthority('ROLE_PESQUISAR')")
     public Page<LancamentoProjection> listarComPaginacao(LancamentoFilter filter, Pageable pageable) {
         return service.listarComPaginancao(filter, pageable);
     }
 
     @Override
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_PESQUISAR')")
     public ResponseEntity<Lancamento> listarPorId(@PathVariable Long id) {
         return service.listarPorId(id);
     }
 
     @Override
     @PostMapping
+    @PreAuthorize("hasAuthority('ROLE_CADASTRAR')")
     public ResponseEntity<Lancamento> cadastrar(@Valid @RequestBody Lancamento lancamento, HttpServletResponse response) {
         Lancamento lancamentoSalvo = service.cadastrar(lancamento);
 
@@ -67,6 +76,7 @@ public class LancamentoResourceImpl implements LancamentoResource {
 
     @Override
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_CADASTRAR')")
     public ResponseEntity<Lancamento> atualizar(@PathVariable Long id, @Valid @RequestBody Lancamento lancamento) {
         Lancamento lancamentoSalvo = service.atualizar(id, lancamento);
         return ResponseEntity.ok().body(lancamentoSalvo);
@@ -81,6 +91,7 @@ public class LancamentoResourceImpl implements LancamentoResource {
 
     @Override
     @GetMapping("gerar-remessa")
+    @PreAuthorize("hasAuthority('ROLE_PESQUISAR')")
     public ResponseEntity exportarRemessa(LancamentoFilter filter) throws IOException {
         List<Lancamento> lancamentos = listarDetalhes(filter);
 
@@ -91,6 +102,7 @@ public class LancamentoResourceImpl implements LancamentoResource {
 
     @Override
     @GetMapping("/{id}/pegar-remessa")
+    @PreAuthorize("hasAuthority('ROLE_PESQUISAR')")
     public ResponseEntity<Object> remessa(@PathVariable Long id) throws IOException {
         byte[] arquivo = service.pegarRemessa(id);
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE)
@@ -100,8 +112,20 @@ public class LancamentoResourceImpl implements LancamentoResource {
     @Override
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("cadastrar-por-lote")
+    @PreAuthorize("hasAuthority('ROLE_CADASTRAR')")
     public void cadastrarPorLote(LancamentoFilter filter, @RequestBody LocalDate vencimento) {
         service.cadastrarPorLote(filter, vencimento);
+    }
+
+    @Override
+    @PostMapping("/anexo")
+    @PreAuthorize("hasAuthority('ROLE_CADASTRAR')")
+    public String uploadArquivo(MultipartFile anexo) throws IOException {
+        OutputStream out = new FileOutputStream("src/main/resources/retorno/" +
+                anexo.getOriginalFilename());
+        out.write(anexo.getBytes());
+        out.close();
+        return "ok";
     }
 
 
