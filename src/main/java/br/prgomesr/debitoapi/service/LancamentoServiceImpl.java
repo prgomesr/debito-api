@@ -15,6 +15,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -25,8 +26,11 @@ import javax.persistence.EntityNotFoundException;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -49,6 +53,11 @@ public class LancamentoServiceImpl implements LancamentoService {
 
     @Autowired
     private ClienteService clienteService;
+
+    @Override
+    public List<Lancamento> listar() {
+        return repository.findAll();
+    }
 
     @Override
     public List<Lancamento> listarDetalhes(LancamentoFilter filter) {
@@ -159,16 +168,26 @@ public class LancamentoServiceImpl implements LancamentoService {
     }
 
     @Override
-    public void tratarRetorno(MultipartFile anexo) {
+    public void tratarRetorno(MultipartFile anexo, Long id) {
         try {
             if (!anexo.isEmpty()) {
                 File file = File.createTempFile(anexo.getOriginalFilename(), "");
                 if (file.exists()) {
+                    Convenio convenio = convenioService.buscarRecursoExistente(id);
+
                     FileUtils.copyInputStreamToFile(anexo.getInputStream(), file);
-                    ArquivoRetorno retorno = new ArquivoRetorno(file);
-                    List<Transacao> registros = retorno.getTransacoes();
-                    registros.forEach(registro -> {
-                        System.out.println(registro.getCodLancamento());
+                    ArquivoRetorno retorno = new ArquivoRetorno(file, convenio);
+                    LancamentoFilter filter = new LancamentoFilter();
+                    filter.setConvenio(convenio.getId().toString());
+                    List<Transacao> transacoes = retorno.getTransacoes();
+                    transacoes.forEach(transacao -> {
+                        Lancamento lancamento = buscarRecursoExistente(Long.valueOf(transacao.getCodLancamento()));
+                        ZoneId defaultZoneId = ZoneId.systemDefault(); //TODO: MELHORAR PARSE DE DATA
+                        Instant instant = transacao.getDataVencimento().toInstant();
+                        lancamento.setPagamento(instant.atZone(defaultZoneId).toLocalDate());
+                        lancamento.setValorPago(transacao.getValorDoDebito());
+                        lancamento.setSituacao(Situacao.PAGO); //TODO: BAIXAR APENAS LANCAMENTOS COM CODIGO 00
+                        cadastrar(lancamento);
                     });
                 }
             }

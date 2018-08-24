@@ -1,9 +1,11 @@
 package br.prgomesr.debitoapi.resource;
 
 import br.prgomesr.debitoapi.event.RecursoCriadoEvent;
+import br.prgomesr.debitoapi.model.Convenio;
 import br.prgomesr.debitoapi.model.Lancamento;
 import br.prgomesr.debitoapi.repository.filter.LancamentoFilter;
 import br.prgomesr.debitoapi.repository.projection.LancamentoProjection;
+import br.prgomesr.debitoapi.service.ConvenioService;
 import br.prgomesr.debitoapi.service.LancamentoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -29,6 +31,9 @@ public class LancamentoResourceImpl implements LancamentoResource {
 
     @Autowired
     private LancamentoService service;
+
+    @Autowired
+    private ConvenioService convenioService;
 
     @Autowired
     private ApplicationEventPublisher publisher;
@@ -116,11 +121,11 @@ public class LancamentoResourceImpl implements LancamentoResource {
     }
 
     @Override
-    @PostMapping("/anexo")
+    @PostMapping("/anexo/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasAuthority('ROLE_CADASTRAR')")
-    public void uploadArquivo(@RequestParam MultipartFile anexo) {
-        service.tratarRetorno(anexo);
+    public void uploadArquivo(@RequestParam MultipartFile anexo, @PathVariable Long id) {
+        service.tratarRetorno(anexo, id);
     }
 
 }

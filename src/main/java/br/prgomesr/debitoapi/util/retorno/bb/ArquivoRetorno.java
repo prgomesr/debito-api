@@ -1,5 +1,7 @@
 package br.prgomesr.debitoapi.util.retorno.bb;
 
+import br.prgomesr.debitoapi.model.Convenio;
+import br.prgomesr.debitoapi.model.Lancamento;
 import org.apache.commons.io.FileUtils;
 import org.jrimum.texgit.FlatFile;
 import org.jrimum.texgit.Record;
@@ -21,10 +23,8 @@ public class ArquivoRetorno {
 
     private FlatFile<Record> arquivoTexto;
 
-    private String layout = "layouts/LayoutBBCNAB240Retorno.txg.xml";
-
-    public ArquivoRetorno(File arquivo) {
-        carregarLayout();
+    public ArquivoRetorno(File arquivo, Convenio convenio) {
+        carregarLayout(convenio);
         carregarLinhas(arquivo);
         carregarInformacoes();
     }
@@ -50,7 +50,15 @@ public class ArquivoRetorno {
         this.arquivoTexto.read(linhas);
     }
 
-    private void carregarLayout() {
+    private void carregarLayout(Convenio convenio) {
+        String layout = "";
+
+        switch (convenio.getId().toString()) {
+            case "1":
+                layout = "layouts/LayoutBBCNAB240Retorno.txg.xml";
+                break;
+        }
+
         InputStream inputStream = ClassLoaders.getResourceAsStream(layout, this.getClass());
         this.arquivoTexto = Texgit.createFlatFile(inputStream);
     }

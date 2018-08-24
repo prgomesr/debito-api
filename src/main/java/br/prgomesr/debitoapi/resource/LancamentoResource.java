@@ -29,6 +29,6 @@ public interface LancamentoResource {
     ResponseEntity exportarRemessa(LancamentoFilter filter) throws IOException;
     ResponseEntity<?> remessa(Long id) throws IOException;
     void cadastrarPorLote(LancamentoFilter filter, LocalDate vencimento);
-    void uploadArquivo(MultipartFile anexo);
+    void uploadArquivo(MultipartFile anexo, Long id);
 
 }
