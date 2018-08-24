@@ -32,7 +32,8 @@ public class Lancamento {
     @NotNull
     private Situacao situacao;
 
-    private String lote;
+    @Column(name = "codigo_retorno")
+    private Long codigoRetorno;
 
     @ManyToOne
     @JoinColumn(name = "cliente_id")
@@ -76,12 +77,12 @@ public class Lancamento {
         this.situacao = situacao;
     }
 
-    public String getLote() {
-        return lote;
+    public Long getCodigoRetorno() {
+        return codigoRetorno;
     }
 
-    public void setLote(String lote) {
-        this.lote = lote;
+    public void setCodigoRetorno(Long codigoRetorno) {
+        this.codigoRetorno = codigoRetorno;
     }
 
     public Cliente getCliente() {
@@ -129,18 +130,4 @@ public class Lancamento {
         return Objects.hash(getId());
     }
 
-    @Override
-    public String toString() {
-        return "Lancamento{" +
-                "id=" + id +
-                ", valor=" + valor +
-                ", valorPago=" + valorPago +
-                ", vencimento=" + vencimento +
-                ", pagamento=" + pagamento +
-                ", situacao=" + situacao +
-                ", lote='" + lote + '\'' +
-                ", cliente=" + cliente +
-                ", convenio=" + convenio +
-                '}';
-    }
 }

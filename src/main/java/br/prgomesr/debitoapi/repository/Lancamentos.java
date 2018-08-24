@@ -11,7 +11,4 @@ import java.util.List;
 
 public interface Lancamentos extends JpaRepository<Lancamento, Long>, LancamentosQuery {
 
-    @Query("select l from Lancamento l where l.lote = :lote ")
-    public List<Lancamento> filtrarPorLote(@Param("lote") String lote);
-
 }

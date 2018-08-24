@@ -12,13 +12,13 @@ public abstract class Lancamento_ {
 
 	public static volatile SingularAttribute<Lancamento, Cliente> cliente;
 	public static volatile SingularAttribute<Lancamento, Situacao> situacao;
-	public static volatile SingularAttribute<Lancamento, String> lote;
 	public static volatile SingularAttribute<Lancamento, BigDecimal> valor;
 	public static volatile SingularAttribute<Lancamento, Convenio> convenio;
 	public static volatile SingularAttribute<Lancamento, BigDecimal> valorPago;
 	public static volatile SingularAttribute<Lancamento, Long> id;
 	public static volatile SingularAttribute<Lancamento, LocalDate> vencimento;
 	public static volatile SingularAttribute<Lancamento, LocalDate> pagamento;
+	public static volatile SingularAttribute<Lancamento, Integer> codigoRetorno;
 
 }
 

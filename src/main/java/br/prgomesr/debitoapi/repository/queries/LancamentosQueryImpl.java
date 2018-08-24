@@ -14,10 +14,7 @@ import org.springframework.util.StringUtils;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,10 +30,12 @@ public class LancamentosQueryImpl implements LancamentosQuery {
 
         //where
         Root<Lancamento> root = criteriaQuery.from(Lancamento.class);
+        Order order = builder.desc(root.get(Lancamento_.vencimento));
 
         //criar os filtros
         Predicate[] predicates = criarFiltros(filter, builder, root);
         criteriaQuery.where(predicates);
+        criteriaQuery.orderBy(order);
 
         TypedQuery<Lancamento> query = manager.createQuery(criteriaQuery);
 
@@ -49,17 +48,19 @@ public class LancamentosQueryImpl implements LancamentosQuery {
         CriteriaQuery<LancamentoProjection> criteria = builder.createQuery(LancamentoProjection.class);
 
         Root<Lancamento> root = criteria.from(Lancamento.class);
+        Order order = builder.desc(root.get(Lancamento_.vencimento));
 
         criteria.select(builder.construct(LancamentoProjection.class,
                 root.get(Lancamento_.id), root.get(Lancamento_.convenio).get(Convenio_.numero),
                 root.get(Lancamento_.cliente).get(Cliente_.nome),
                 root.get(Lancamento_.valor), root.get(Lancamento_.valorPago), root.get(Lancamento_.vencimento),
                 root.get(Lancamento_.pagamento), root.get(Lancamento_.situacao),
-                root.get(Lancamento_.lote)));
+                root.get(Lancamento_.codigoRetorno)));
 
         //criar os filtros
         Predicate[] predicates = criarFiltros(filter, builder, root);
         criteria.where(predicates);
+        criteria.orderBy(order);
 
         TypedQuery<LancamentoProjection> query = manager.createQuery(criteria);
 
@@ -72,17 +73,19 @@ public class LancamentosQueryImpl implements LancamentosQuery {
         CriteriaQuery<LancamentoProjection> criteria = builder.createQuery(LancamentoProjection.class);
 
         Root<Lancamento> root = criteria.from(Lancamento.class);
+        Order order = builder.desc(root.get(Lancamento_.vencimento));
 
         criteria.select(builder.construct(LancamentoProjection.class,
                 root.get(Lancamento_.id), root.get(Lancamento_.convenio).get(Convenio_.numero),
                 root.get(Lancamento_.cliente).get(Cliente_.nome),
                 root.get(Lancamento_.valor), root.get(Lancamento_.valorPago), root.get(Lancamento_.vencimento),
                 root.get(Lancamento_.pagamento), root.get(Lancamento_.situacao),
-                root.get(Lancamento_.lote)));
+                root.get(Lancamento_.codigoRetorno)));
 
         //criar os filtros
         Predicate[] predicates = criarFiltros(filter, builder, root);
         criteria.where(predicates);
+        criteria.orderBy(order);
 
         TypedQuery<LancamentoProjection> query = manager.createQuery(criteria);
 
