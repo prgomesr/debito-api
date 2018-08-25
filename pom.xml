@@ -146,36 +146,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-            <plugin>
-                <groupId>org.bsc.maven</groupId>
-                <artifactId>maven-processor-plugin</artifactId>
-                <version>3.3.1</version>
-                <executions>
-                    <execution>
-                        <id>process</id>
-                        <goals>
-                            <goal>process</goal>
-                        </goals>
-                        <phase>generate-sources
-                        </phase> <!-- Fase do ciclo de vida do maven onde o plugin vai ser executado -->
-                        <configuration>
-                            <processors>
-                                <processor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor
-                                </processor> <!-- Classe processadora que gerará os meta models-->
-                            </processors>
-                            <outputDirectory>src/main/java
-                            </outputDirectory> <!-- Diretório onde você deseja salvar os MetaModels -->
-                        </configuration>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.hibernate</groupId>
-                        <artifactId>hibernate-jpamodelgen</artifactId>
-                        <version>5.2.10.Final</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
+
         </plugins>
     </build>
 

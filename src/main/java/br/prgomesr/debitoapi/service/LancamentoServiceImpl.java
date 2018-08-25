@@ -1,5 +1,6 @@
 package br.prgomesr.debitoapi.service;
 
+import br.prgomesr.debitoapi.edi.bb.CodigoRetorno;
 import br.prgomesr.debitoapi.model.*;
 import br.prgomesr.debitoapi.repository.Lancamentos;
 import br.prgomesr.debitoapi.repository.filter.LancamentoFilter;
@@ -157,6 +158,9 @@ public class LancamentoServiceImpl implements LancamentoService {
                 novoLancamento.setConvenio(lancamento.getConvenio());
 
                 novosLancamentos.add(novoLancamento);
+                if (novoLancamento.getCliente().isInativo()) {
+                    novosLancamentos.remove(novoLancamento);
+                }
             });
             novosLancamentos.forEach(lancamento -> {
                 cadastrar(lancamento);
@@ -191,7 +195,7 @@ public class LancamentoServiceImpl implements LancamentoService {
         List<Transacao> transacoes = retorno.getTransacoes();
         transacoes.forEach(transacao -> {
             Lancamento lancamento = buscarRecursoExistente(Long.valueOf(transacao.getCodLancamento()));
-            if (transacao.getCodRetorno().equalsIgnoreCase("00")) {
+            if (transacao.getCodRetorno().equalsIgnoreCase(CodigoRetorno.EFETUADO.getDescricao())) {
                 lancamento.setPagamento(toLocalDate(transacao.getDataVencimento()));
                 lancamento.setValorPago(transacao.getValorDoDebito());
                 lancamento.setSituacao(Situacao.PAGO);
@@ -210,7 +214,7 @@ public class LancamentoServiceImpl implements LancamentoService {
     }
 
     public static LocalDate toLocalDate(Date data) {
-        ZoneId defaultZoneId = ZoneId.systemDefault(); //TODO: MELHORAR PARSE DE DATA
+        ZoneId defaultZoneId = ZoneId.systemDefault();
         Instant instant = data.toInstant();
         return instant.atZone(defaultZoneId).toLocalDate();
     }

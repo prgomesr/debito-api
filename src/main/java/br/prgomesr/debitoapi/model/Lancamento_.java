@@ -18,7 +18,7 @@ public abstract class Lancamento_ {
 	public static volatile SingularAttribute<Lancamento, Long> id;
 	public static volatile SingularAttribute<Lancamento, LocalDate> vencimento;
 	public static volatile SingularAttribute<Lancamento, LocalDate> pagamento;
-	public static volatile SingularAttribute<Lancamento, Integer> codigoRetorno;
+	public static volatile SingularAttribute<Lancamento, Long> codigoRetorno;
 
 }
 
