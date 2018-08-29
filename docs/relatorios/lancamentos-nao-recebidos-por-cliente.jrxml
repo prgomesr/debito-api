@@ -63,11 +63,11 @@
 		<![CDATA[]]>
 	</queryString>
 	<field name="cliente" class="br.prgomesr.debitoapi.model.Cliente"/>
-	<field name="valorPago" class="java.math.BigDecimal"/>
+	<field name="valor" class="java.math.BigDecimal"/>
 	<field name="codigoRetorno" class="java.lang.Long"/>
 	<variable name="TOTAL" class="java.math.BigDecimal" resetType="Column" incrementType="Column" calculation="Sum">
-		<variableExpression><![CDATA[$V{TOTAL}.add($F{valorPago})]]></variableExpression>
-		<initialValueExpression><![CDATA[$F{valorPago}.subtract( $F{valorPago})]]></initialValueExpression>
+		<variableExpression><![CDATA[$V{TOTAL}.add($F{valor})]]></variableExpression>
+		<initialValueExpression><![CDATA[$F{valor}.subtract( $F{valor})]]></initialValueExpression>
 	</variable>
 	<title>
 		<band height="91" splitType="Stretch">
@@ -92,14 +92,14 @@
 				<imageExpression><![CDATA["/Users/prgomesr/Downloads/logo-prgomesr.png"]]></imageExpression>
 			</image>
 			<staticText>
-				<reportElement x="114" y="-1" width="249" height="25" uuid="e622555d-198b-4ccd-a4a1-c59c53304058">
+				<reportElement x="95" y="0" width="320" height="25" uuid="e622555d-198b-4ccd-a4a1-c59c53304058">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement>
 					<font size="19" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Lançamentos Recebidos]]></text>
+				<text><![CDATA[Lançamentos Não Recebidos]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="390" y="31" width="100" height="30" uuid="7f4b0022-7709-4876-8ebd-ff62594a1898"/>
@@ -112,7 +112,7 @@
 				<textFieldExpression><![CDATA[" de " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="64" y="26" width="320" height="30" uuid="af486ea1-55da-4d98-b8d0-fda3711c7ac4"/>
+				<reportElement x="75" y="26" width="320" height="30" uuid="af486ea1-55da-4d98-b8d0-fda3711c7ac4"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="16" isBold="true"/>
 				</textElement>
@@ -186,7 +186,7 @@
 			</textField>
 			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
 				<reportElement x="361" y="2" width="70" height="15" uuid="324153ca-95a6-4c23-93e3-f8ce85b8def2"/>
-				<textFieldExpression><![CDATA[$F{valorPago}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{valor}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="437" y="2" width="119" height="15" uuid="74ab12b8-8705-48d3-9367-b691d814e90f"/>
