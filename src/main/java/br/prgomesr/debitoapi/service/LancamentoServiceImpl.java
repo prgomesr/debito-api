@@ -1,5 +1,7 @@
 package br.prgomesr.debitoapi.service;
 
+import br.prgomesr.debitoapi.dto.LancamentoNaoRecebidoEstatisticaCliente;
+import br.prgomesr.debitoapi.dto.LancamentoRecebidoEstatisticaCliente;
 import br.prgomesr.debitoapi.edi.bb.CodigoRetorno;
 import br.prgomesr.debitoapi.model.*;
 import br.prgomesr.debitoapi.repository.Lancamentos;
@@ -12,6 +14,11 @@ import br.prgomesr.debitoapi.service.exception.RemessaNaoEncontradaException;
 import br.prgomesr.debitoapi.util.remessa.bb.GerarRemessa;
 import br.prgomesr.debitoapi.util.retorno.bb.ArquivoRetorno;
 import br.prgomesr.debitoapi.util.retorno.bb.Transacao;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.BeanUtils;
@@ -26,12 +33,11 @@ import javax.persistence.EntityNotFoundException;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class LancamentoServiceImpl implements LancamentoService {
@@ -68,6 +74,7 @@ public class LancamentoServiceImpl implements LancamentoService {
     public List<LancamentoProjection> listar(LancamentoFilter filter) {
         return repository.resumir(filter);
     }
+
 
     @Override
     public Page<LancamentoProjection> listarComPaginancao(LancamentoFilter filter, Pageable pageable) {
@@ -188,10 +195,56 @@ public class LancamentoServiceImpl implements LancamentoService {
 
     }
 
+    @Override
+    public byte[] relatorioLancametosRecebidos(LancamentoFilter filter) throws JRException {
+        List<LancamentoRecebidoEstatisticaCliente> dados = repository.recebidoPorCliente(filter);
+
+        JasperPrint jasperPrint = criarRelatorioRecebido(filter, dados);
+
+        return JasperExportManager.exportReportToPdf(jasperPrint);
+    }
+
+    private JasperPrint criarRelatorioRecebido(LancamentoFilter filter, List<LancamentoRecebidoEstatisticaCliente> dados) throws JRException {
+        Map<String, Object> parametros = new HashMap<>();
+        parametros.put("DT_INICIO", java.sql.Date.valueOf(filter.getVencimentoDe()));
+        parametros.put("DT_FIM", java.sql.Date.valueOf(filter.getVencimentoAte()));
+        parametros.put("CONVENIO", filter.getConvenio());
+        parametros.put("REPORT_LOCALE", new Locale("pt", "BR"));
+
+        InputStream inputStream = this.getClass().getResourceAsStream("/relatorios" +
+                "/lancamentos-recebidos-por-cliente.jasper");
+
+        return JasperFillManager.fillReport(inputStream, parametros,
+                new JRBeanCollectionDataSource(dados));
+    }
+
+    private JasperPrint criarRelatorioNaoRecebido(LancamentoFilter filter, List<LancamentoNaoRecebidoEstatisticaCliente> dados) throws JRException {
+        Map<String, Object> parametros = new HashMap<>();
+        parametros.put("DT_INICIO", java.sql.Date.valueOf(filter.getVencimentoDe()));
+        parametros.put("DT_FIM", java.sql.Date.valueOf(filter.getVencimentoAte()));
+        parametros.put("CONVENIO", filter.getConvenio());
+        parametros.put("REPORT_LOCALE", new Locale("pt", "BR"));
+
+        InputStream inputStream = this.getClass().getResourceAsStream("/relatorios" +
+                "/lancamentos-nao-recebidos-por-cliente.jasper");
+
+        return JasperFillManager.fillReport(inputStream, parametros,
+                new JRBeanCollectionDataSource(dados));
+    }
+
+    @Override
+    public byte[] relatorioLancametosNaoRecebidos(LancamentoFilter filter) throws JRException {
+        List<LancamentoNaoRecebidoEstatisticaCliente> dados = repository.naoRecebidoPorCliente(filter);
+
+        JasperPrint jasperPrint = criarRelatorioNaoRecebido(filter, dados);
+
+        return JasperExportManager.exportReportToPdf(jasperPrint);
+    }
+
     private void atualizarLancamentosPeloArquivo(File file, Convenio convenio) {
         ArquivoRetorno retorno = new ArquivoRetorno(file, convenio);
         LancamentoFilter filter = new LancamentoFilter();
-        filter.setConvenio(convenio.getId().toString());
+        filter.setConvenio(convenio.getId());
         List<Transacao> transacoes = retorno.getTransacoes();
         transacoes.forEach(transacao -> {
             Lancamento lancamento = buscarRecursoExistente(Long.valueOf(transacao.getCodLancamento()));

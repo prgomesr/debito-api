@@ -1,5 +1,6 @@
 package br.prgomesr.debitoapi.resource;
 
+import br.prgomesr.debitoapi.dto.LancamentoRecebidoEstatisticaCliente;
 import br.prgomesr.debitoapi.event.RecursoCriadoEvent;
 import br.prgomesr.debitoapi.model.Convenio;
 import br.prgomesr.debitoapi.model.Lancamento;
@@ -7,10 +8,12 @@ import br.prgomesr.debitoapi.repository.filter.LancamentoFilter;
 import br.prgomesr.debitoapi.repository.projection.LancamentoProjection;
 import br.prgomesr.debitoapi.service.ConvenioService;
 import br.prgomesr.debitoapi.service.LancamentoService;
+import net.sf.jasperreports.engine.JRException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -50,6 +53,24 @@ public class LancamentoResourceImpl implements LancamentoResource {
     @PreAuthorize("hasAuthority('ROLE_PESQUISAR')")
     public List<LancamentoProjection> listar(LancamentoFilter filter) {
         return service.listar(filter);
+    }
+
+    @Override
+    @GetMapping("relatorios/recebido")
+    @PreAuthorize("hasAuthority('ROLE_PESQUISAR')")
+    public ResponseEntity<byte[]> relatorioRecebidoPorCliente(LancamentoFilter filter) throws JRException {
+        byte[] relatorio = service.relatorioLancametosRecebidos(filter);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE).body(relatorio);
+    }
+
+    @Override
+    @GetMapping("relatorios/nao-recebido")
+    @PreAuthorize("hasAuthority('ROLE_PESQUISAR')")
+    public ResponseEntity<byte[]> relatorioNaoRecebidoPorCliente(LancamentoFilter filter) throws JRException {
+        byte[] relatorio = service.relatorioLancametosNaoRecebidos(filter);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE).body(relatorio);
     }
 
     @Override

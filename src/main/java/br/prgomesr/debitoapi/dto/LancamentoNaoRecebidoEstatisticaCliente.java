@@ -4,16 +4,16 @@ import br.prgomesr.debitoapi.model.Cliente;
 
 import java.math.BigDecimal;
 
-public class LancamentoRecebidoEstatisticaCliente {
+public class LancamentoNaoRecebidoEstatisticaCliente {
 
     private Cliente cliente;
     private Long codigoRetorno;
-    private BigDecimal valorPago;
+    private BigDecimal valor;
 
-    public LancamentoRecebidoEstatisticaCliente(Cliente cliente, Long codigoRetorno, BigDecimal valorPago) {
+    public LancamentoNaoRecebidoEstatisticaCliente(Cliente cliente, Long codigoRetorno, BigDecimal valor) {
         this.cliente = cliente;
         this.codigoRetorno = codigoRetorno;
-        this.valorPago = valorPago;
+        this.valor = valor;
     }
 
     public Cliente getCliente() {
@@ -32,11 +32,11 @@ public class LancamentoRecebidoEstatisticaCliente {
         this.codigoRetorno = codigoRetorno;
     }
 
-    public BigDecimal getValorPago() {
-        return valorPago;
+    public BigDecimal getValor() {
+        return valor;
     }
 
-    public void setValorPago(BigDecimal valorPago) {
-        this.valorPago = valorPago;
+    public void setValor(BigDecimal valor) {
+        this.valor = valor;
     }
 }

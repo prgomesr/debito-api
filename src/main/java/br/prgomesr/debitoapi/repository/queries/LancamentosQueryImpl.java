@@ -1,5 +1,7 @@
 package br.prgomesr.debitoapi.repository.queries;
 
+import br.prgomesr.debitoapi.dto.LancamentoNaoRecebidoEstatisticaCliente;
+import br.prgomesr.debitoapi.dto.LancamentoRecebidoEstatisticaCliente;
 import br.prgomesr.debitoapi.model.Cliente_;
 import br.prgomesr.debitoapi.model.Convenio_;
 import br.prgomesr.debitoapi.model.Lancamento;
@@ -15,6 +17,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,6 +66,52 @@ public class LancamentosQueryImpl implements LancamentosQuery {
         criteria.orderBy(order);
 
         TypedQuery<LancamentoProjection> query = manager.createQuery(criteria);
+
+        return query.getResultList();
+    }
+
+    @Override
+    public List<LancamentoRecebidoEstatisticaCliente> recebidoPorCliente(LancamentoFilter filter) {
+        CriteriaBuilder builder = manager.getCriteriaBuilder();
+        CriteriaQuery<LancamentoRecebidoEstatisticaCliente> criteria = builder.createQuery(LancamentoRecebidoEstatisticaCliente.class);
+
+        Root<Lancamento> root = criteria.from(Lancamento.class);
+
+        Order order = builder.asc(root.get(Lancamento_.cliente).get(Cliente_.nome));
+
+        criteria.select(builder.construct(LancamentoRecebidoEstatisticaCliente.class,
+                root.get(Lancamento_.cliente),
+                root.get(Lancamento_.codigoRetorno),
+                root.get(Lancamento_.valorPago)));
+
+        Predicate[] predicates = criarFiltrosRelatoriosRecebidos(filter, builder, root);
+        criteria.where(predicates);
+        criteria.orderBy(order);
+
+        TypedQuery<LancamentoRecebidoEstatisticaCliente> query = manager.createQuery(criteria);
+
+        return query.getResultList();
+    }
+
+    @Override
+    public List<LancamentoNaoRecebidoEstatisticaCliente> naoRecebidoPorCliente(LancamentoFilter filter) {
+        CriteriaBuilder builder = manager.getCriteriaBuilder();
+        CriteriaQuery<LancamentoNaoRecebidoEstatisticaCliente> criteria = builder.createQuery(LancamentoNaoRecebidoEstatisticaCliente.class);
+
+        Root<Lancamento> root = criteria.from(Lancamento.class);
+
+        Order order = builder.asc(root.get(Lancamento_.cliente).get(Cliente_.nome));
+
+        criteria.select(builder.construct(LancamentoNaoRecebidoEstatisticaCliente.class,
+                root.get(Lancamento_.cliente),
+                root.get(Lancamento_.codigoRetorno),
+                root.get(Lancamento_.valor)));
+
+        Predicate[] predicates = criarFiltrosRelatoriosNaoRecebidos(filter, builder, root);
+        criteria.where(predicates);
+        criteria.orderBy(order);
+
+        TypedQuery<LancamentoNaoRecebidoEstatisticaCliente> query = manager.createQuery(criteria);
 
         return query.getResultList();
     }
@@ -128,4 +177,39 @@ public class LancamentosQueryImpl implements LancamentosQuery {
         }
         return predicates.toArray(new Predicate[predicates.size()]);
     }
+
+    private Predicate[] criarFiltrosRelatoriosRecebidos(LancamentoFilter filter, CriteriaBuilder builder, Root<Lancamento> root) {
+        List<Predicate> predicates = new ArrayList<>();
+        if (!StringUtils.isEmpty(filter.getConvenio())) {
+            predicates.add(builder.equal(root.get(Lancamento_.convenio).get(Convenio_.id),
+                    filter.getConvenio()));
+        }
+        if (filter.getVencimentoDe() != null) {
+            predicates.add(builder.greaterThanOrEqualTo(root.get(Lancamento_.vencimento),
+                    filter.getVencimentoDe()));
+        }
+        if (filter.getVencimentoAte() != null) {
+            predicates.add(builder.lessThanOrEqualTo(root.get(Lancamento_.vencimento), filter.getVencimentoAte()));
+        }
+        predicates.add(builder.equal(root.get(Lancamento_.codigoRetorno), "0"));
+        return predicates.toArray(new Predicate[predicates.size()]);
+    }
+
+    private Predicate[] criarFiltrosRelatoriosNaoRecebidos(LancamentoFilter filter, CriteriaBuilder builder, Root<Lancamento> root) {
+        List<Predicate> predicates = new ArrayList<>();
+        if (!StringUtils.isEmpty(filter.getConvenio())) {
+            predicates.add(builder.equal(root.get(Lancamento_.convenio).get(Convenio_.id),
+                    filter.getConvenio()));
+        }
+        if (filter.getVencimentoDe() != null) {
+            predicates.add(builder.greaterThanOrEqualTo(root.get(Lancamento_.vencimento),
+                    filter.getVencimentoDe()));
+        }
+        if (filter.getVencimentoAte() != null) {
+            predicates.add(builder.lessThanOrEqualTo(root.get(Lancamento_.vencimento), filter.getVencimentoAte()));
+        }
+        predicates.add(builder.notEqual(root.get(Lancamento_.codigoRetorno), "0"));
+        return predicates.toArray(new Predicate[predicates.size()]);
+    }
+
 }

@@ -35,6 +35,9 @@ public class Lancamento {
     @Column(name = "codigo_retorno")
     private Long codigoRetorno;
 
+    @Transient
+    private String detalheRetorno;
+
     @ManyToOne
     @JoinColumn(name = "cliente_id")
     @NotNull
@@ -115,6 +118,14 @@ public class Lancamento {
 
     public void setConvenio(Convenio convenio) {
         this.convenio = convenio;
+    }
+
+    public String getDetalheRetorno() {
+        return detalheRetorno;
+    }
+
+    public void setDetalheRetorno(String detalheRetorno) {
+        this.detalheRetorno = detalheRetorno;
     }
 
     @Override

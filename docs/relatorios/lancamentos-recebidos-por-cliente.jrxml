@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="lancamentos-por-cliente" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="423af170-2f4a-4d1b-9fee-4ad2e65492ef">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<parameter name="DT_INICIO" class="java.util.Date"/>
+	<parameter name="DT_FIM" class="java.util.Date"/>
+	<parameter name="CONVENIO" class="java.lang.Long"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="total" class="java.math.BigDecimal"/>
+	<field name="cliente" class="br.prgomesr.debitoapi.model.Cliente"/>
+	<field name="valor" class="java.math.BigDecimal"/>
+	<field name="codigoRetorno" class="java.lang.Long"/>
+	<variable name="TOTAL" class="java.math.BigDecimal" resetType="Column" incrementType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$V{TOTAL}.add($F{valor})]]></variableExpression>
+		<initialValueExpression><![CDATA[$F{valor}.subtract($F{valor})]]></initialValueExpression>
+	</variable>
+	<variable name="VALOR_INICIAL" class="java.math.BigDecimal"/>
+	<title>
+		<band height="75" splitType="Stretch">
+			<textField>
+				<reportElement x="54" y="31" width="500" height="25" uuid="d6044f04-6f78-42e5-89f4-245b12165bcf"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="19"/>
+				</textElement>
+				<textFieldExpression><![CDATA["de " + DATEFORMAT($P{DT_INICIO}, "dd/MM/yyyy") + " até " + DATEFORMAT($P{DT_FIM}, "dd/MM/yyyy")]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="54" y="2" width="500" height="25" uuid="5a18a6f6-ef12-40f0-81fb-c4fe9f5beb06"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="19"/>
+				</textElement>
+				<text><![CDATA[Lançamentos Recebidos]]></text>
+			</staticText>
+			<image>
+				<reportElement x="3" y="-7" width="51" height="43" uuid="84545ce2-c9e6-446b-8221-b1b67e4e8e30"/>
+				<imageExpression><![CDATA["/Users/prgomesr/Downloads/logo-prgomesr.png"]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="25" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="555" height="25" backcolor="#E3E1E1" uuid="11cc0e5a-6510-4e52-9ec2-ad58f6ca7cc0"/>
+			</rectangle>
+			<line>
+				<reportElement x="184" y="0" width="1" height="25" uuid="8858a8af-53ee-4fa7-86a0-3f9dd8077b78"/>
+			</line>
+			<line>
+				<reportElement x="268" y="0" width="1" height="25" uuid="91338e75-3576-406d-9a12-51e804266b2b"/>
+			</line>
+			<line>
+				<reportElement x="350" y="0" width="1" height="25" uuid="e9af9bc7-e969-42b2-a476-6cf6bacdaa09"/>
+			</line>
+			<line>
+				<reportElement x="423" y="0" width="1" height="25" uuid="19ed0421-2576-4e4c-b96c-a513c19d3a0e"/>
+			</line>
+			<staticText>
+				<reportElement x="1" y="0" width="41" height="24" uuid="ccb937e7-43a8-4ee7-99ea-8b2c19d83762"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Nome]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="186" y="0" width="41" height="24" uuid="f19bc124-6d6e-4457-83a4-7f7134a22fb6"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Contato]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="270" y="0" width="41" height="24" uuid="de787680-0a75-49c2-9102-b55a6e6b7d21"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Recado]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="352" y="0" width="41" height="24" uuid="e595ad5d-ccea-422e-907a-d2ff006f3bbe"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Valor]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="426" y="1" width="51" height="24" uuid="659601e9-26e3-4f62-9a0a-8bee0c7ad418"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Situação]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="25" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="555" height="25" uuid="08074ad9-f9b0-40ed-969d-950ebc8681aa"/>
+			</rectangle>
+			<line>
+				<reportElement x="184" y="0" width="1" height="25" uuid="f4b68c0e-1696-4893-9110-85218a13b644"/>
+			</line>
+			<line>
+				<reportElement x="268" y="0" width="1" height="25" uuid="fcb34828-43e8-4454-902b-cf90aaaef125"/>
+			</line>
+			<line>
+				<reportElement x="350" y="0" width="1" height="25" uuid="afc0d622-d74c-462a-a511-14a1a4e85c31"/>
+			</line>
+			<line>
+				<reportElement x="423" y="0" width="1" height="25" uuid="35329116-8bee-443a-a657-03ab88048707"/>
+			</line>
+			<textField isBlankWhenNull="true">
+				<reportElement x="3" y="0" width="180" height="24" uuid="e0d7c629-9c7c-4628-a40f-178d3b046703"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cliente}.getNome()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="187" y="0" width="81" height="24" uuid="a290d340-beea-4730-821d-658c54c6ac20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cliente}.getTelefone1()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="273" y="0" width="76" height="24" uuid="2832c0b0-23f1-4790-9014-cb9f0483940e"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cliente}.getTelefone2()]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤#,##0.00;¤-#,##0.00">
+				<reportElement x="353" y="1" width="70" height="24" uuid="6d621f60-edf4-4e04-9608-e534078d3996"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="429" y="0" width="119" height="25" uuid="cf8df634-b1af-4ae4-b8c9-d6c1604284da"/>
+				<textFieldExpression><![CDATA[$F{codigoRetorno}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="26" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="1" width="100" height="25" uuid="d2f39ee1-44a1-48ae-9f63-51ba9aa8799e"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Data " + DATEFORMAT(TODAY(), "dd/MM/yyyy")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="299" y="1" width="100" height="25" uuid="ca77d5e1-eaba-4fb1-ad80-4abbbbe797c1"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<lastPageFooter>
+		<band height="42">
+			<rectangle>
+				<reportElement x="424" y="3" width="130" height="25" backcolor="#DEDCDC" uuid="68753a1b-1f7d-40fe-860b-e9b731a5a11c"/>
+			</rectangle>
+			<textField>
+				<reportElement x="440" y="6" width="100" height="20" uuid="2a112d18-249d-4461-ade4-fe4449064fd6"/>
+				<textFieldExpression><![CDATA[$V{TOTAL}]]></textFieldExpression>
+			</textField>
+		</band>
+	</lastPageFooter>
+</jasperReport>

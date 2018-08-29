@@ -3,6 +3,7 @@ package br.prgomesr.debitoapi.service;
 import br.prgomesr.debitoapi.model.Lancamento;
 import br.prgomesr.debitoapi.repository.filter.LancamentoFilter;
 import br.prgomesr.debitoapi.repository.projection.LancamentoProjection;
+import net.sf.jasperreports.engine.JRException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -22,8 +23,10 @@ public interface LancamentoService {
     Lancamento cadastrar(Lancamento lancamento);
     Lancamento atualizar(Long id, Lancamento lancamento);
     void remover(Long id);
-    public void exportarRemessa(List<Lancamento> lancamentos) throws IOException;
-    public byte [] pegarRemessa(Long id) throws IOException;
-    public void cadastrarPorLote(LancamentoFilter filter, LocalDate vencimento);
+    void exportarRemessa(List<Lancamento> lancamentos) throws IOException;
+    byte [] pegarRemessa(Long id) throws IOException;
+    void cadastrarPorLote(LancamentoFilter filter, LocalDate vencimento);
     void tratarRetorno(MultipartFile file, Long id);
+    byte[] relatorioLancametosRecebidos(LancamentoFilter filter) throws JRException;
+    byte[] relatorioLancametosNaoRecebidos(LancamentoFilter filter) throws JRException;
 }
